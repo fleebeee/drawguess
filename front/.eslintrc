@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "prettier/react"
+  ],
+
+  "env": {
+    "es6": true
+  },
+
+  "parser": "babel-eslint",
+
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "generators": true
+    }
+  },
+
+  "plugins": ["react", "prettier", "react-hooks"],
+
+  "rules": {}
+}
