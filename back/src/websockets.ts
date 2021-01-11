@@ -2,8 +2,7 @@ import WebSocket from 'ws';
 
 interface ClientMessage {
   content: string;
-  author: string;
-  date: string;
+  author: number;
 }
 
 interface ServerMessage {
@@ -13,28 +12,48 @@ interface ServerMessage {
   id: number;
 }
 
+interface Player {
+  id: number;
+  name: string;
+  points: number;
+}
+
+interface Game {
+  players: Player[];
+  has_started: boolean;
+  turn: number;
+
+}
+
 interface Payload {
-  content: ClientMessage | ServerMessage | ServerMessage[];
+  content: Game | ServerMessage[] | ServerMessage;
   type: string;
 }
 
 class WebSocketHandler {
   MAX_MESSAGES: number;
-  id: number;
-  messages: ServerMessage[];
+  lobbyId: number;
+  playerId: number;
+  messageId: number;
+  games: Game[];
+  chat: ServerMessage[];
 
   constructor(server) {
     this.MAX_MESSAGES = 1024;
-    this.id = 1;
-    this.messages = [];
+    this.lobbyId = 1;
+    this.playerId = 1;
+    this.messageId = 1;
+    this.games = [];
+    this.chat = [];
 
     const wss = new WebSocket.Server({ server });
 
     const wsLog = (text: string) => console.log(`WebSocket: ${text}`);
-    wss.on('connection', (ws) => {
-      // Send backlog for new connections
+    wss.on('connection', (ws, req) => {
+      // Send game state for new connections
+      console.debug('||DEBUG: [req.url]', req.url);
       ws.send(
-        JSON.stringify({ content: this.messages, type: 'array' } as Payload)
+        JSON.stringify({ content: this.chat, type: 'array' } as Payload)
       );
 
       ws.on('message', (clientMessageJSON: string) => {
@@ -43,7 +62,8 @@ class WebSocketHandler {
         // If we want to process the message somehow, do it here
         const serverMessage: ServerMessage = {
           ...clientMessage,
-          id: this.id++,
+          author: `${clientMessage.author}`,
+          id: this.messageId++,
           date: new Date().toString(),
         };
 
@@ -60,9 +80,9 @@ class WebSocketHandler {
         });
 
         // Store message in backlog
-        if (this.messages.length >= this.MAX_MESSAGES)
-          this.messages.splice(0, 1);
-        this.messages.push(serverMessage);
+        if (this.chat.length >= this.MAX_MESSAGES)
+          this.chat.splice(0, 1);
+        this.chat.push(serverMessage);
       });
 
       wsLog('New connection');

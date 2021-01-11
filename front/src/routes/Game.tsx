@@ -4,7 +4,6 @@ import styled from 'styled-components';
 interface ClientMessage {
   content: string;
   author: string;
-  date: string;
 }
 
 interface ServerMessage {
@@ -75,7 +74,6 @@ const Game = () => {
         JSON.stringify({
           content,
           author: 'Test User',
-          date: new Date().toString(),
         } as ClientMessage)
       );
       console.debug('sent something');

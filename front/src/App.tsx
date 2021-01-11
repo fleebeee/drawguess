@@ -11,6 +11,7 @@ import Navigation from './components/Navigation';
 // Lazy load routes
 const Home = loadable(() => import('./routes/Home'));
 const Game = loadable(() => import('./routes/Game'));
+const Create = loadable(() => import('./routes/Create'));
 
 const pageTransition = {
   in: { opacity: 1, y: 0 },
@@ -24,35 +25,19 @@ const App = () => {
     <>
       <React.StrictMode>
         <GlobalStyle />
-        <Navigation />
-        <ContentWrapper>
           <Content>
               <Routes location={location} key={location.pathname}>
                 <Route exact path="/" element={<Home />} />
                 <Route path="/game" element={<Game />} />
+                <Route path="/create" element={<Create />} />
               </Routes>
           </Content>
-        </ContentWrapper>
       </React.StrictMode>
     </>
   );
 };
 
-const Layout = styled.div`
-  display: grid;
-  grid-template-columns: 300px auto;
-`;
-
-const ContentWrapper = styled.div`
-  margin-left: var(--sidebar-width);
-  display: grid;
-  grid-template-columns: 20px auto 20px;
-  margin-top: 20px;
-`;
-
 const Content = styled.div`
-  grid-column-start: 2;
-  grid-column-end: 3;
   background-color: var(--main-700);
   padding: 40px;
 `;
@@ -115,7 +100,11 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
-  a {
+  a,
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
     text-decoration: none;
   }
 `;
