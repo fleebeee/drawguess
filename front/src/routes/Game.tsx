@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 interface ClientMessage {
   content: string;
@@ -24,12 +25,19 @@ const Game = () => {
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
 
   useEffect(() => {
-    setWs(new WebSocket('ws://localhost:5002'));
+    let id = 0
+    const match = location.pathname.match(/\/game\/([0-9]+)/)
+    if (match && match.length > 1) {
+      id = parseInt(match[1], 10);
+    }
+
+    setWs(new WebSocket(`ws://localhost:5002/${id}`));
   }, []);
 
   useEffect(() => {

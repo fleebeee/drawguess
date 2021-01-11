@@ -51,7 +51,6 @@ class WebSocketHandler {
     const wsLog = (text: string) => console.log(`WebSocket: ${text}`);
     wss.on('connection', (ws, req) => {
       // Send game state for new connections
-      console.debug('||DEBUG: [req.url]', req.url);
       ws.send(
         JSON.stringify({ content: this.chat, type: 'array' } as Payload)
       );

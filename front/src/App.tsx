@@ -1,17 +1,14 @@
 import React from 'react';
 import { hot } from 'react-hot-loader/root';
 // @ts-ignore
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import loadable from '@loadable/component';
 
-import Navigation from './components/Navigation';
-
 // Lazy load routes
 const Home = loadable(() => import('./routes/Home'));
 const Game = loadable(() => import('./routes/Game'));
-const Create = loadable(() => import('./routes/Create'));
 
 const pageTransition = {
   in: { opacity: 1, y: 0 },
@@ -26,11 +23,10 @@ const App = () => {
       <React.StrictMode>
         <GlobalStyle />
           <Content>
-              <Routes location={location} key={location.pathname}>
-                <Route exact path="/" element={<Home />} />
-                <Route path="/game" element={<Game />} />
-                <Route path="/create" element={<Create />} />
-              </Routes>
+              <Switch location={location} key={location.pathname}>
+                <Route exact path="/"><Home /></Route>
+                <Route path="/game"><Game /></Route>
+              </Switch>
           </Content>
       </React.StrictMode>
     </>

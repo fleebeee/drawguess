@@ -1,18 +1,35 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
-const Home = () => (
+
+
+const Home = () => {
+  const [gameId, setGameId] = useState();
+
+  const handleCreate = async () => {
+    const res = await fetch('http://localhost:5002/create', {
+      method: 'POST',
+    });
+    const { id } = await res.json();
+    setGameId(id);
+  }
+
+  if (gameId) {
+    return (
+      <Redirect to={`/game/${gameId}`} />
+    )
+  }
+
+  return (
   <Wrapper>
     <Header>Welcome to drawguess</Header>
-    <Create to={'/create'}>Create a new game</Create>
+    <Create onClick={handleCreate}>Create a new game</Create>
     <Or>OR</Or>
     <Join>Join an existing game</Join>
-    <InputWrapper><Code type='text' placeholder="Paste game code here"></Code><Go to={'/create'}>Go</Go></InputWrapper>
-
-
+    <InputWrapper><Code type='text' placeholder="Paste game code here"></Code><Go>Go</Go></InputWrapper>
   </Wrapper>
-);
+)};
 
 const Wrapper = styled.div`
   display: flex;
@@ -23,7 +40,7 @@ const Wrapper = styled.div`
 const Header = styled.h1`
 `;
 
-const Create = styled(Link)`
+const Create = styled.div`
   font-size: 24px;
   color: var(--primary-300);
   background-color: var(--secondary-300);
@@ -48,7 +65,7 @@ const Code = styled.input`
   padding: 4px 4px 4px 12px;
 `;
 
-const Go = styled(Link)`
+const Go = styled.div`
   padding: 8px;
   border-radius: 4px;
   color: var(--primary-300);
