@@ -2,29 +2,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
-interface ClientMessage {
-  content: string;
-  author: string;
+interface Message {
+  type: string;
+  payload: ChatMessageClient | ChatMessageServer | ChatMessageServer[];
 }
 
-interface ServerMessage {
+interface ChatMessageClient {
+  content: string;
+}
+
+interface ChatMessageServer {
   content: string;
   author: string;
   date: string;
   id: number;
 }
 
-interface Payload {
-  content: ClientMessage | ServerMessage | ServerMessage[];
-  type: string;
-}
-
 const Game = () => {
   const [ws, setWs] = useState(null as WebSocket);
-  const [messages, setMessages] = useState([] as ServerMessage[]);
+  const [messages, setMessages] = useState([] as ChatMessageServer[]);
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
 
   const messagesRef = useRef(messages);
@@ -47,13 +46,14 @@ const Game = () => {
       };
 
       ws.onmessage = (event) => {
-        const payload: Payload = JSON.parse(event.data);
-        if (payload.type === 'array') {
-          setMessages(payload.content as ServerMessage[]);
+        const m: Message = JSON.parse(event.data);
+        const { type, payload } = m;
+        if (type === 'array') {
+          setMessages(payload as ChatMessageServer[]);
           setLoading(false);
         } else {
           setMessages(
-            messagesRef.current.concat(payload.content as ServerMessage)
+            messagesRef.current.concat(payload as ChatMessageServer)
           );
         }
       };
@@ -80,9 +80,9 @@ const Game = () => {
     try {
       ws.send(
         JSON.stringify({
-          content,
-          author: 'Test User',
-        } as ClientMessage)
+          type: 'chatMessage',
+          payload: { content },
+        } as Message)
       );
       console.debug('sent something');
       setInput('');
@@ -109,12 +109,12 @@ const Game = () => {
   }
 
   if (loading) {
-    return <GameBox />;
+    return <GameBox>Loading</GameBox>;
   }
 
   return (
     <GameBox>
-      {messages.map((message: ServerMessage) => (
+      {messages.map((message: ChatMessageServer) => (
         <Message key={message.id}>
           {message.author}: {message.content}
         </Message>
