@@ -1,8 +1,10 @@
 import WebSocket from 'ws';
+import _ from 'lodash';
+import { nanoid } from 'nanoid';
 
 interface Message {
   type: string;
-  payload: ChatMessageClient | ChatMessageServer;
+  payload: ChatMessageClient | ChatMessageServer | User | string;
 }
 
 interface ChatMessageClient {
@@ -17,14 +19,16 @@ interface ChatMessageServer {
   id: number;
 }
 
-interface Player {
+interface User {
   id: number;
+  secret: string;
   name: string;
-  points: number;
+  iat: Date;
+  socket: WebSocket;
 }
 
 interface Game {
-  players: Player[];
+  users: User[];
   has_started: boolean;
   turn: number;
 }
@@ -32,34 +36,67 @@ interface Game {
 class WebSocketHandler {
   MAX_MESSAGES: number;
   lobbyId: number;
-  playerId: number;
+  userId: number;
   messageId: number;
   games: Game[];
   chat: ChatMessageServer[];
+  users: User[];
 
   constructor(server) {
     this.MAX_MESSAGES = 1024;
     this.lobbyId = 1;
-    this.playerId = 1;
+    this.userId = 1;
     this.messageId = 1;
     this.games = [];
     this.chat = [];
+    this.users = [];
 
     const wss = new WebSocket.Server({ server });
-// https://github.com/websockets/ws/blob/d1a8af4ddb1b24a4ee23acf66decb0ed0e0d8862/examples/express-session-parse/index.js
     const wsLog = (text: string) => console.log(`WebSocket: ${text}`);
-    wss.on('connection', (ws, request, client) => {
+    wss.on('connection', (ws, req) => {
       // Send game state for new connections
       // ws.send(
       //   JSON.stringify({ content: this.chat, type: 'array' } as Payload)
       // );
 
       ws.on('message', (message: string) => {
-        console.log(`Received message ${message} from user ${client}`);
+        console.log(`Received message ${message} from user ${req}`);
         const m: Message = JSON.parse(message);
         const { type, payload } = m;
 
         switch (type) {
+          case 'register':
+            // Generate a random secret that is used in all interactions
+            const username = payload as string;
+            const secret = nanoid();
+
+            if (_.find(this.users, (user: User) => user.name === username)) {
+              ws.send(
+                JSON.stringify({
+                  type: 'error',
+                  payload: { error: 'Username is already in use' },
+                })
+              );
+              break;
+            }
+
+            const user: User = {
+              id: this.userId++,
+              name: username,
+              secret,
+              iat: new Date(),
+              socket: ws,
+            };
+
+            this.users.push(user);
+
+            ws.send(
+              JSON.stringify({
+                type: 'register',
+                payload: user,
+              } as Message)
+            );
+
           // User sent a message
           case 'chatMessage':
             const clientMessage = payload as ChatMessageClient;
@@ -67,7 +104,7 @@ class WebSocketHandler {
             // If we want to process the message somehow, do it here
             const serverMessage: ChatMessageServer = {
               ...clientMessage,
-              author: `${client}`,
+              author: 'kekw',
               id: this.messageId++,
               date: new Date().toString(),
             };
@@ -85,8 +122,7 @@ class WebSocketHandler {
             });
 
             // Store message in backlog
-            if (this.chat.length >= this.MAX_MESSAGES)
-              this.chat.splice(0, 1);
+            if (this.chat.length >= this.MAX_MESSAGES) this.chat.splice(0, 1);
             this.chat.push(serverMessage);
         }
       });

@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
-// @ts-ignore
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import loadable from '@loadable/component';
@@ -10,24 +9,80 @@ import loadable from '@loadable/component';
 const Home = loadable(() => import('./routes/Home'));
 const Game = loadable(() => import('./routes/Game'));
 
-const pageTransition = {
-  in: { opacity: 1, y: 0 },
-  out: { opacity: 0, y: '-100%' },
-};
-
 const App = () => {
-  const location = useLocation();
+  const [ws, setWs] = useState(null as WebSocket);
+  const [gameId, setGameId] = useState();
+  const [error, setError] = useState(false);
+  const [messages, setMessages] = useState([] as ChatMessageServer[]);
+  const [user, setUser] = useState(null as User);
+
+  useEffect(() => {
+    setWs(new WebSocket(`ws://localhost:5002`));
+  }, []);
+
+  useEffect(() => {
+    if (ws) {
+      ws.onopen = (event) => {
+        console.debug('WebSocket connected');
+      };
+
+      ws.onmessage = (event) => {
+        const m: Message = JSON.parse(event.data);
+        const { type, payload } = m;
+
+        switch (type) {
+          case 'chatMessages': {
+            setMessages(payload as ChatMessageServer[]);
+            break;
+          }
+          case 'chatMessage': {
+            setMessages([...messages, payload as ChatMessageServer]);
+            break;
+          }
+          case 'register': {
+            setUser(payload as User);
+            break;
+          }
+          default: {
+            console.error('Received unexpected message type:', type);
+            setError(true);
+          }
+        }
+      };
+
+      ws.onerror = (event) => {
+        console.error('WebSocket error observed:', event);
+        setError(true);
+      };
+
+      ws.onclose = () => {
+        console.debug('WebSocket disconnected');
+        setError(true);
+      };
+
+      // Clean up function
+      return () => {
+        ws.close();
+      };
+    }
+  }, [ws]);
+
+  const commonProps = { ws, user, gameId };
 
   return (
     <>
       <React.StrictMode>
         <GlobalStyle />
-          <Content>
-              <Switch location={location} key={location.pathname}>
-                <Route exact path="/"><Home /></Route>
-                <Route path="/game"><Game /></Route>
-              </Switch>
-          </Content>
+        <Content>
+          <Switch>
+            <Route exact path="/">
+              <Home {...commonProps} />
+            </Route>
+            <Route path="/game">
+              <Game {...commonProps} />
+            </Route>
+          </Switch>
+        </Content>
       </React.StrictMode>
     </>
   );

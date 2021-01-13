@@ -2,24 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
-interface Message {
-  type: string;
-  payload: ChatMessageClient | ChatMessageServer | ChatMessageServer[];
-}
-
-interface ChatMessageClient {
-  content: string;
-}
-
-interface ChatMessageServer {
-  content: string;
-  author: string;
-  date: string;
-  id: number;
-}
-
-const Game = () => {
-  const [ws, setWs] = useState(null as WebSocket);
+const Game = ({ ws }) => {
   const [messages, setMessages] = useState([] as ChatMessageServer[]);
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
@@ -28,16 +11,6 @@ const Game = () => {
 
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
-
-  useEffect(() => {
-    let id = 0
-    const match = location.pathname.match(/\/game\/([0-9]+)/)
-    if (match && match.length > 1) {
-      id = parseInt(match[1], 10);
-    }
-
-    setWs(new WebSocket(`ws://localhost:5002/${id}`));
-  }, []);
 
   useEffect(() => {
     if (ws) {
@@ -52,9 +25,7 @@ const Game = () => {
           setMessages(payload as ChatMessageServer[]);
           setLoading(false);
         } else {
-          setMessages(
-            messagesRef.current.concat(payload as ChatMessageServer)
-          );
+          setMessages(messagesRef.current.concat(payload as ChatMessageServer));
         }
       };
 
