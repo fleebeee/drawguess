@@ -16,7 +16,7 @@ const Home = (props) => {
     );
   };
 
-  const handleGo = async () => {
+  const handleGo = () => {
     ws.send(
       JSON.stringify({
         type: 'register-and-join',

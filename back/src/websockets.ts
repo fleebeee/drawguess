@@ -113,6 +113,8 @@ class WebSocketHandler {
             const user = this.register(ws, payload);
             if (!user) break;
 
+            this.users.push(user);
+
             // Ensure a unique room code
             let code = generateRoomCode();
             while (_.has(this.games, code)) {
@@ -153,6 +155,16 @@ class WebSocketHandler {
               (g: Game) => g.code === payload.code
             );
 
+            if (!game) {
+              ws.send(
+                JSON.stringify({
+                  type: 'error',
+                  payload: `Game ${payload.code} not found`,
+                } as Message)
+              );
+              break;
+            }
+
             this.users.push(newUser);
             game.users.push(newUser.id);
 
@@ -172,7 +184,7 @@ class WebSocketHandler {
             break;
           }
           // User sent a message
-          case 'chatMessage': {
+          case 'client-message': {
             const clientMessage = payload as ChatMessageClient;
 
             const chatUser: User = this.authenticate(clientMessage.user);
@@ -181,6 +193,42 @@ class WebSocketHandler {
                 JSON.stringify({
                   type: 'error',
                   payload: 'User is not authenticated',
+                })
+              );
+              break;
+            }
+
+            // Find game
+            const gameCode = payload.gameCode;
+            if (!gameCode) {
+              ws.send(
+                JSON.stringify({
+                  type: 'error',
+                  payload: 'Game code not supplied',
+                })
+              );
+              break;
+            }
+
+            const chatGame: Game = _.find(
+              this.games,
+              (g) => g.code === gameCode
+            );
+            if (!chatGame) {
+              ws.send(
+                JSON.stringify({
+                  type: 'error',
+                  payload: `Game ${gameCode} not found`,
+                })
+              );
+              break;
+            }
+
+            if (!_.find(chatGame.users, (u) => u === chatUser.id)) {
+              ws.send(
+                JSON.stringify({
+                  type: 'error',
+                  payload: `User ${chatUser.name} is not in game ${gameCode}`,
                 })
               );
               break;
@@ -199,16 +247,24 @@ class WebSocketHandler {
               type: 'chatMessage',
             } as Message);
 
+            chatGame.chat.push(serverMessage);
+
             // Broadcast message to everyone
-            wss.clients.forEach(function each(client) {
-              if (client.readyState === WebSocket.OPEN) {
-                client.send(response);
+            chatGame.users.forEach((id) => {
+              const u = _.find(this.users, (u) => u.id === id);
+              if (!u) {
+                console.error(
+                  `User with ID ${id} was not found in game ${chatGame.code} when broadcasting`
+                );
+              }
+              if (u.socket.readyState === WebSocket.OPEN) {
+                u.socket.send(response);
               }
             });
-
-            // Store message in backlog
-            //   if (this.chat.length >= this.MAX_MESSAGES) this.chat.splice(0, 1);
-            //   this.chat.push(serverMessage);
+            break;
+          }
+          default: {
+            console.error(`Unexpected message type: ${type}`);
           }
         }
       });

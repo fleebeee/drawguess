@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
@@ -10,11 +10,14 @@ const HomeView = loadable(() => import('./routes/Home'));
 const GameView = loadable(() => import('./routes/Game'));
 
 const App = () => {
-  const [ws, setWs] = useState(null as WebSocket);
+  const [ws, setWs] = useState<WebSocket>(null);
   const [error, setError] = useState('');
-  const [messages, setMessages] = useState([] as ChatMessageServer[]);
-  const [user, setUser] = useState(null as User);
-  const [game, setGame] = useState(null as Game);
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<ChatMessageServer[]>([]);
+  const [user, setUser] = useState<User>(null);
+  const [game, setGame] = useState<Game>(null);
+  const messagesRef = useRef<ChatMessageServer[]>();
+  messagesRef.current = messages;
 
   useEffect(() => {
     setWs(new WebSocket(`ws://localhost:5002`));
@@ -36,7 +39,7 @@ const App = () => {
             break;
           }
           case 'chatMessage': {
-            setMessages([...messages, payload as ChatMessageServer]);
+            setMessages([...messagesRef.current, payload as ChatMessageServer]);
             break;
           }
           case 'user': {
@@ -45,6 +48,7 @@ const App = () => {
           }
           case 'game': {
             setGame(payload as Game);
+            setMessages(payload.chat);
             break;
           }
           case 'error': {
@@ -75,7 +79,7 @@ const App = () => {
     }
   }, [ws]);
 
-  const commonProps = { ws, user, game };
+  const commonProps = { ws, user, game, error, loading };
 
   return (
     <>
@@ -88,7 +92,7 @@ const App = () => {
               <HomeView {...commonProps} />
             </Route>
             <Route path="/game">
-              <GameView {...commonProps} />
+              <GameView {...commonProps} messages={messages} />
             </Route>
           </Switch>
         </Content>

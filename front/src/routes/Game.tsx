@@ -2,59 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
-const Game = ({ ws }) => {
-  const [messages, setMessages] = useState([] as ChatMessageServer[]);
+const Game = ({ ws, game, user, error, loading, messages }) => {
   const [input, setInput] = useState('');
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const messagesRef = useRef(messages);
-  messagesRef.current = messages;
-
-  useEffect(() => {
-    if (ws) {
-      ws.onopen = (event) => {
-        console.debug('WebSocket connected');
-      };
-
-      ws.onmessage = (event) => {
-        const m: Message = JSON.parse(event.data);
-        const { type, payload } = m;
-        if (type === 'array') {
-          setMessages(payload as ChatMessageServer[]);
-          setLoading(false);
-        } else {
-          setMessages(messagesRef.current.concat(payload as ChatMessageServer));
-        }
-      };
-
-      ws.onerror = (event) => {
-        console.error('WebSocket error observed:', event);
-        setError(true);
-        setLoading(false);
-      };
-
-      ws.onclose = () => {
-        console.debug('WebSocket disconnected');
-        setError(true);
-      };
-
-      // Clean up function
-      return () => {
-        ws.close();
-      };
-    }
-  }, [ws]);
+  const [name, setName] = useState('');
+  const location = useLocation();
 
   const sendMessage = (content) => {
     try {
       ws.send(
         JSON.stringify({
-          type: 'chatMessage',
-          payload: { content },
+          type: 'client-message',
+          payload: { user, content, gameCode: game.code },
         } as Message)
       );
-      console.debug('sent something');
       setInput('');
     } catch (error) {
       console.debug(error);
@@ -69,6 +29,40 @@ const Game = ({ ws }) => {
       setInput(newInput);
     }
   };
+
+  const handleGo = () => {
+    const match = location.pathname.match(/^\/game\/([a-z]{4})$/);
+    if (!match || match.length < 1) {
+      console.error(`Game code not found in URL ${location.pathname}`);
+      return;
+    }
+    const code = match[1];
+    ws.send(
+      JSON.stringify({
+        type: 'register-and-join',
+        payload: { name, code },
+      } as Message)
+    );
+  };
+
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  if (!user) {
+    // return <Redirect to="/" />;
+    return (
+      <Register>
+        <Name
+          type="text"
+          placeholder="Nickname"
+          value={name}
+          onChange={handleNameChange}
+        ></Name>
+        <Go onClick={handleGo}>Go</Go>
+      </Register>
+    );
+  }
 
   if (error) {
     return (
@@ -117,6 +111,25 @@ const TextField = styled.textarea`
   border-radius: 4px;
   border: 2px solid var(--secondary-700);
   resize: none;
+`;
+
+const Register = styled.div`
+  display: flex;
+`;
+
+const Name = styled.input`
+  height: 32px;
+  font-size: 16px;
+  padding: 4px 4px 4px 12px;
+`;
+
+const Go = styled.div`
+  cursor: pointer;
+  padding: 16px 24px;
+  border-radius: 4px;
+  color: var(--primary-300);
+  background-color: var(--secondary-300);
+  margin-left: 12px;
 `;
 
 export default Game;
