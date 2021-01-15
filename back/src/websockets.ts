@@ -1,15 +1,16 @@
 import WebSocket from 'ws';
 import _ from 'lodash';
 import { nanoid } from 'nanoid';
+import { generateRoomCode } from './utils';
 
 interface Message {
   type: string;
-  payload: ChatMessageClient | ChatMessageServer | User | string;
+  payload: any;
 }
 
 interface ChatMessageClient {
   content: string;
-  author: number;
+  user: User;
 }
 
 interface ChatMessageServer {
@@ -28,9 +29,11 @@ interface User {
 }
 
 interface Game {
-  users: User[];
+  code: string;
+  users: number[];
   has_started: boolean;
   turn: number;
+  chat: ChatMessageServer[];
 }
 
 class WebSocketHandler {
@@ -39,8 +42,40 @@ class WebSocketHandler {
   userId: number;
   messageId: number;
   games: Game[];
-  chat: ChatMessageServer[];
   users: User[];
+
+  register = (socket, name) => {
+    // Generate a random secret that is used in all interactions
+    const username = name;
+    const secret = nanoid();
+
+    if (_.find(this.users, (user: User) => user.name === username)) {
+      socket.send(
+        JSON.stringify({
+          type: 'error',
+          payload: 'Username is already in use',
+        })
+      );
+      return null;
+    }
+
+    const newUser: User = {
+      id: this.userId++,
+      name: username,
+      secret,
+      iat: new Date(),
+      socket,
+    };
+
+    return newUser;
+  };
+
+  authenticate = (user: User) => {
+    return _.find(
+      this.users,
+      (u) => u.id === user.id && u.secret === user.secret
+    );
+  };
 
   constructor(server) {
     this.MAX_MESSAGES = 1024;
@@ -48,7 +83,6 @@ class WebSocketHandler {
     this.userId = 1;
     this.messageId = 1;
     this.games = [];
-    this.chat = [];
     this.users = [];
 
     const wss = new WebSocket.Server({ server });
@@ -60,51 +94,102 @@ class WebSocketHandler {
       // );
 
       ws.on('message', (message: string) => {
-        console.log(`Received message ${message} from user ${req}`);
+        console.log(`Received message ${message}`);
         const m: Message = JSON.parse(message);
         const { type, payload } = m;
 
         switch (type) {
-          case 'register':
-            // Generate a random secret that is used in all interactions
-            const username = payload as string;
-            const secret = nanoid();
+          case 'create-game': {
+            // const user: User = payload.user;
+            // if (user && !this.authenticate(user)) {
+            //   ws.send(
+            //     JSON.stringify({
+            //       type: 'error',
+            //       payload: { error: 'User is not authenticated' },
+            //     })
+            //   );
+            // }
 
-            if (_.find(this.users, (user: User) => user.name === username)) {
+            const user = this.register(ws, payload);
+            if (!user) break;
+
+            // Ensure a unique room code
+            let code = generateRoomCode();
+            while (_.has(this.games, code)) {
+              code = generateRoomCode();
+            }
+
+            const newGame: Game = {
+              code,
+              users: [user.id],
+              has_started: false,
+              turn: 0,
+              chat: [],
+            };
+
+            this.games.push(newGame);
+
+            ws.send(
+              JSON.stringify({
+                type: 'user',
+                payload: user,
+              } as Message)
+            );
+
+            ws.send(
+              JSON.stringify({
+                type: 'game',
+                payload: newGame,
+              } as Message)
+            );
+            break;
+          }
+          case 'register-and-join': {
+            const newUser = this.register(ws, payload.name);
+            if (!newUser) break;
+
+            const game: Game = _.find(
+              this.games,
+              (g: Game) => g.code === payload.code
+            );
+
+            this.users.push(newUser);
+            game.users.push(newUser.id);
+
+            ws.send(
+              JSON.stringify({
+                type: 'user',
+                payload: newUser,
+              } as Message)
+            );
+
+            ws.send(
+              JSON.stringify({
+                type: 'game',
+                payload: game,
+              } as Message)
+            );
+            break;
+          }
+          // User sent a message
+          case 'chatMessage': {
+            const clientMessage = payload as ChatMessageClient;
+
+            const chatUser: User = this.authenticate(clientMessage.user);
+            if (!chatUser) {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  payload: { error: 'Username is already in use' },
+                  payload: 'User is not authenticated',
                 })
               );
               break;
             }
 
-            const user: User = {
-              id: this.userId++,
-              name: username,
-              secret,
-              iat: new Date(),
-              socket: ws,
-            };
-
-            this.users.push(user);
-
-            ws.send(
-              JSON.stringify({
-                type: 'register',
-                payload: user,
-              } as Message)
-            );
-
-          // User sent a message
-          case 'chatMessage':
-            const clientMessage = payload as ChatMessageClient;
-
             // If we want to process the message somehow, do it here
             const serverMessage: ChatMessageServer = {
-              ...clientMessage,
-              author: 'kekw',
+              content: clientMessage.content,
+              author: chatUser.name,
               id: this.messageId++,
               date: new Date().toString(),
             };
@@ -122,8 +207,9 @@ class WebSocketHandler {
             });
 
             // Store message in backlog
-            if (this.chat.length >= this.MAX_MESSAGES) this.chat.splice(0, 1);
-            this.chat.push(serverMessage);
+            //   if (this.chat.length >= this.MAX_MESSAGES) this.chat.splice(0, 1);
+            //   this.chat.push(serverMessage);
+          }
         }
       });
 

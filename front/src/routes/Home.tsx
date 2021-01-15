@@ -2,15 +2,25 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 
-const Home = ({ ws, user, gameId }) => {
+const Home = (props) => {
+  const { ws, user, game } = props;
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
 
-  const handleGo = () => {
+  const handleCreate = async () => {
     ws.send(
       JSON.stringify({
-        type: 'register',
+        type: 'create-game',
         payload: name,
+      } as Message)
+    );
+  };
+
+  const handleGo = async () => {
+    ws.send(
+      JSON.stringify({
+        type: 'register-and-join',
+        payload: { name, code },
       } as Message)
     );
   };
@@ -23,16 +33,20 @@ const Home = ({ ws, user, gameId }) => {
     setCode(event.target.value);
   };
 
-  console.debug('||DEBUG: [user]', user);
-
-  if (gameId) {
-    return <Redirect to={`/game/${gameId}`} />;
+  if (game && game.code) {
+    return <Redirect to={`/game/${game.code}`} />;
   }
 
   return (
     <Wrapper>
       <Header>Welcome to drawguess</Header>
-      <Create>Create a new game</Create>
+      <Name
+        type="text"
+        placeholder="Nickname"
+        value={name}
+        onChange={handleNameChange}
+      ></Name>
+      <Create onClick={handleCreate}>Create a new game</Create>
       <Or>OR</Or>
       <Join>Join an existing game</Join>
       <BottomRow>

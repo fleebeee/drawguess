@@ -10,13 +10,7 @@ declare module '*.png' {
 
 interface Message {
   type: string;
-  payload:
-    | ChatMessageClient
-    | ChatMessageServer
-    | ChatMessageServer[]
-    | User
-    | string
-    | null;
+  payload: any;
 }
 
 interface ChatMessageClient {
@@ -36,4 +30,11 @@ interface User {
   name: string;
   iat: Date;
   socket: WebSocket;
+}
+
+interface Game {
+  code: string;
+  users: number[];
+  has_started: boolean;
+  turn: number;
 }

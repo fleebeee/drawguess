@@ -6,15 +6,15 @@ import styled, { createGlobalStyle } from 'styled-components';
 import loadable from '@loadable/component';
 
 // Lazy load routes
-const Home = loadable(() => import('./routes/Home'));
-const Game = loadable(() => import('./routes/Game'));
+const HomeView = loadable(() => import('./routes/Home'));
+const GameView = loadable(() => import('./routes/Game'));
 
 const App = () => {
   const [ws, setWs] = useState(null as WebSocket);
-  const [gameId, setGameId] = useState();
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [messages, setMessages] = useState([] as ChatMessageServer[]);
   const [user, setUser] = useState(null as User);
+  const [game, setGame] = useState(null as Game);
 
   useEffect(() => {
     setWs(new WebSocket(`ws://localhost:5002`));
@@ -39,25 +39,33 @@ const App = () => {
             setMessages([...messages, payload as ChatMessageServer]);
             break;
           }
-          case 'register': {
+          case 'user': {
             setUser(payload as User);
+            break;
+          }
+          case 'game': {
+            setGame(payload as Game);
+            break;
+          }
+          case 'error': {
+            setError(payload as string);
             break;
           }
           default: {
             console.error('Received unexpected message type:', type);
-            setError(true);
+            setError('Received unexpected message type');
           }
         }
       };
 
       ws.onerror = (event) => {
         console.error('WebSocket error observed:', event);
-        setError(true);
+        setError('WebSocket error observed');
       };
 
       ws.onclose = () => {
         console.debug('WebSocket disconnected');
-        setError(true);
+        setError('WebSocket disconnected');
       };
 
       // Clean up function
@@ -67,19 +75,20 @@ const App = () => {
     }
   }, [ws]);
 
-  const commonProps = { ws, user, gameId };
+  const commonProps = { ws, user, game };
 
   return (
     <>
       <React.StrictMode>
         <GlobalStyle />
         <Content>
+          {error}
           <Switch>
             <Route exact path="/">
-              <Home {...commonProps} />
+              <HomeView {...commonProps} />
             </Route>
             <Route path="/game">
-              <Game {...commonProps} />
+              <GameView {...commonProps} />
             </Route>
           </Switch>
         </Content>

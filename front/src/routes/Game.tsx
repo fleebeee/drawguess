@@ -7,7 +7,6 @@ const Game = ({ ws }) => {
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const location = useLocation();
 
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
