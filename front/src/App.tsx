@@ -11,7 +11,7 @@ const GameView = loadable(() => import('./routes/Game'));
 
 const App = () => {
   const [ws, setWs] = useState<WebSocket>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<ApiError>(null);
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessageServer[]>([]);
   const [user, setUser] = useState<User>(null);
@@ -27,11 +27,31 @@ const App = () => {
     if (ws) {
       ws.onopen = (event) => {
         console.debug('WebSocket connected');
+        const id = localStorage.getItem('id');
+        const name = localStorage.getItem('name');
+        const secret = localStorage.getItem('secret');
+        if (name && secret) {
+          console.debug('Using existing credentials');
+          setUser({
+            id: parseInt(id, 10),
+            name,
+            secret,
+          });
+
+          ws.send(
+            JSON.stringify({
+              type: 'reconnect',
+              payload: { user: { id, name, secret } },
+            } as Message)
+          );
+        }
       };
 
       ws.onmessage = (event) => {
         const m: Message = JSON.parse(event.data);
         const { type, payload } = m;
+
+        console.debug('||DEBUG: [type, payload]', type, payload);
 
         switch (type) {
           case 'chatMessages': {
@@ -43,33 +63,57 @@ const App = () => {
             break;
           }
           case 'user': {
-            setUser(payload as User);
+            if (!payload) {
+              setUser(null);
+              localStorage.clear();
+              break;
+            }
+            const { id, name, secret } = payload as User;
+            setUser({ id, name, secret });
+            localStorage.setItem('id', payload.id);
+            localStorage.setItem('name', payload.name);
+            localStorage.setItem('secret', payload.secret);
+            setError(null);
             break;
           }
           case 'game': {
+            if (!payload) {
+              setGame(null);
+              break;
+            }
             setGame(payload as Game);
             setMessages(payload.chat);
+            setError(null);
             break;
           }
           case 'error': {
-            setError(payload as string);
+            setError(payload as ApiError);
             break;
           }
           default: {
             console.error('Received unexpected message type:', type);
-            setError('Received unexpected message type');
+            setError({
+              type: 'UNEXPECTED_MESSAGE_TYPE',
+              string: 'Received unexpected message type',
+            });
           }
         }
       };
 
       ws.onerror = (event) => {
         console.error('WebSocket error observed:', event);
-        setError('WebSocket error observed');
+        setError({
+          type: 'WEBSOCKET_ERROR',
+          string: `WebSocket error observed: ${event}`,
+        });
       };
 
       ws.onclose = () => {
         console.debug('WebSocket disconnected');
-        setError('WebSocket disconnected');
+        setError({
+          type: 'WEBSOCKET_DISCONNECTED',
+          string: 'WebSocket disconnected',
+        });
       };
 
       // Clean up function
@@ -86,7 +130,7 @@ const App = () => {
       <React.StrictMode>
         <GlobalStyle />
         <Content>
-          {error}
+          {error && error.string}
           <Switch>
             <Route exact path="/">
               <HomeView {...commonProps} />

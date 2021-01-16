@@ -53,7 +53,10 @@ class WebSocketHandler {
       socket.send(
         JSON.stringify({
           type: 'error',
-          payload: 'Username is already in use',
+          payload: {
+            type: 'USER_NAME_NOT_AVAILABLE',
+            string: 'Username is already in use',
+          },
         })
       );
       return null;
@@ -159,7 +162,10 @@ class WebSocketHandler {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  payload: `Game ${payload.code} not found`,
+                  payload: {
+                    type: 'GAME_NOT_FOUND',
+                    string: `Game ${payload.code} not found`,
+                  },
                 } as Message)
               );
               break;
@@ -183,6 +189,66 @@ class WebSocketHandler {
             );
             break;
           }
+          case 'reconnect': {
+            const { user } = payload;
+
+            const oldUser = _.find(
+              this.users,
+              (u) => u.id == parseInt(user.id, 10)
+            );
+
+            if (!oldUser) {
+              // Just reset the old user and game
+              ws.send(
+                JSON.stringify({
+                  type: 'user',
+                  payload: null,
+                } as Message)
+              );
+              ws.send(
+                JSON.stringify({
+                  type: 'game',
+                  payload: null,
+                } as Message)
+              );
+              break;
+            }
+
+            const game = _.find(this.games, (g) =>
+              _.find(g.users, (u) => u === parseInt(user.id, 10))
+            );
+
+            if (game) {
+              // Replace socket with new one
+              oldUser.socket = ws;
+
+              ws.send(
+                JSON.stringify({
+                  type: 'game',
+                  payload: game,
+                } as Message)
+              );
+              break;
+            }
+            // Client has outdated data
+            else {
+              // Again, just reset
+              ws.send(
+                JSON.stringify({
+                  type: 'user',
+                  payload: null,
+                } as Message)
+              );
+              ws.send(
+                JSON.stringify({
+                  type: 'game',
+                  payload: null,
+                } as Message)
+              );
+              break;
+            }
+            break;
+          }
           // User sent a message
           case 'client-message': {
             const clientMessage = payload as ChatMessageClient;
@@ -192,7 +258,10 @@ class WebSocketHandler {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  payload: 'User is not authenticated',
+                  payload: {
+                    type: 'AUTH',
+                    string: 'User is not authenticated',
+                  },
                 })
               );
               break;
@@ -204,7 +273,10 @@ class WebSocketHandler {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  payload: 'Game code not supplied',
+                  payload: {
+                    type: 'CODE_MISSING',
+                    string: 'Game code not supplied',
+                  },
                 })
               );
               break;
@@ -218,7 +290,10 @@ class WebSocketHandler {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  payload: `Game ${gameCode} not found`,
+                  payload: {
+                    type: 'GAME_NOT_FOUND',
+                    string: `Game ${gameCode} not found`,
+                  },
                 })
               );
               break;
@@ -228,7 +303,10 @@ class WebSocketHandler {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  payload: `User ${chatUser.name} is not in game ${gameCode}`,
+                  payload: {
+                    type: 'USER_NOT_IN_GAME',
+                    string: `User ${chatUser.name} is not in game ${gameCode}`,
+                  },
                 })
               );
               break;

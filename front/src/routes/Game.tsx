@@ -76,6 +76,10 @@ const Game = ({ ws, game, user, error, loading, messages }) => {
     return <GameBox>Loading</GameBox>;
   }
 
+  if (!game) {
+    return <GameBox>Game not found</GameBox>;
+  }
+
   return (
     <GameBox>
       {messages.map((message: ChatMessageServer) => (
@@ -115,6 +119,7 @@ const TextField = styled.textarea`
 
 const Register = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const Name = styled.input`

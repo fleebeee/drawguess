@@ -28,8 +28,8 @@ interface User {
   id: number;
   secret: string;
   name: string;
-  iat: Date;
-  socket: WebSocket;
+  // iat: Date;
+  // socket: WebSocket;
 }
 
 interface Game {
@@ -37,4 +37,9 @@ interface Game {
   users: number[];
   has_started: boolean;
   turn: number;
+}
+
+interface ApiError {
+  type: string;
+  string: string;
 }
