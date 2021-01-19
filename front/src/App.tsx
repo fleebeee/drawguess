@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { hot } from 'react-hot-loader/root';
 import { Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
@@ -217,4 +216,4 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export default hot(App);
+export default App;

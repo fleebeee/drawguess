@@ -82,16 +82,19 @@ const Game = ({ ws, game, user, error, loading, messages }) => {
 
   return (
     <GameBox>
-      {messages.map((message: ChatMessageServer) => (
-        <Message key={message.id}>
-          {message.author}: {message.content}
-        </Message>
-      ))}
-      <TextField
-        placeholder="Send a message..."
-        value={input}
-        onChange={handleInputChange}
-      />
+      <GameComponent>Peli</GameComponent>
+      <Chat>
+        {messages.map((message: ChatMessageServer) => (
+          <Message key={message.id}>
+            {message.author}: {message.content}
+          </Message>
+        ))}
+        <TextField
+          placeholder="Send a message..."
+          value={input}
+          onChange={handleInputChange}
+        />
+      </Chat>
     </GameBox>
   );
 };
@@ -136,5 +139,11 @@ const Go = styled.div`
   background-color: var(--secondary-300);
   margin-left: 12px;
 `;
+
+const Chat = styled.div`
+  max-height: 400px;
+`;
+
+const GameComponent = styled.div``;
 
 export default Game;
