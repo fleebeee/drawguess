@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Redirect } from 'react-router-dom';
 
-const Game = ({ ws, game, user, error, loading, messages }) => {
+import PreGame from './PreGame';
+
+const GameView = ({ ws, game, user, error, loading, messages }) => {
   const [input, setInput] = useState('');
   const [name, setName] = useState('');
   const location = useLocation();
@@ -45,6 +47,15 @@ const Game = ({ ws, game, user, error, loading, messages }) => {
     );
   };
 
+  const handleLeave = () => {
+    ws.send(
+      JSON.stringify({
+        type: 'leave',
+        payload: { user },
+      } as Message)
+    );
+  };
+
   const handleNameChange = (event) => {
     setName(event.target.value);
   };
@@ -77,18 +88,31 @@ const Game = ({ ws, game, user, error, loading, messages }) => {
   }
 
   if (!game) {
-    return <GameBox>Game not found</GameBox>;
+    return <Redirect to="/" />;
   }
+
+  const getGameView = (game) => {
+    switch (game.view) {
+      case 'pregame': {
+        return <PreGame ws={ws} game={game} user={user} />;
+      }
+      default:
+        return null;
+    }
+  };
 
   return (
     <GameBox>
-      <GameComponent>Peli</GameComponent>
+      <div onClick={handleLeave}>Leave</div>
+      <GameComponent>{getGameView(game)}</GameComponent>
       <Chat>
-        {messages.map((message: ChatMessageServer) => (
-          <Message key={message.id}>
-            {message.author}: {message.content}
-          </Message>
-        ))}
+        <Messages>
+          {messages.map((message: ChatMessageServer) => (
+            <Message key={message.id}>
+              {message.author}: {message.content}
+            </Message>
+          ))}
+        </Messages>
         <TextField
           placeholder="Send a message..."
           value={input}
@@ -100,9 +124,6 @@ const Game = ({ ws, game, user, error, loading, messages }) => {
 };
 
 const GameBox = styled.ul`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
   height: 600px;
   background-color: var(--main-700);
 `;
@@ -118,6 +139,13 @@ const TextField = styled.textarea`
   border-radius: 4px;
   border: 2px solid var(--secondary-700);
   resize: none;
+  width: 100%;
+`;
+
+const Messages = styled.div`
+  width: 100%;
+  height: 150px;
+  overflow-y: scroll;
 `;
 
 const Register = styled.div`
@@ -141,9 +169,9 @@ const Go = styled.div`
 `;
 
 const Chat = styled.div`
-  max-height: 400px;
+  width: 100%;
 `;
 
 const GameComponent = styled.div``;
 
-export default Game;
+export default GameView;

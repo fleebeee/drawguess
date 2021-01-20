@@ -5,8 +5,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 import loadable from '@loadable/component';
 
 // Lazy load routes
-const HomeView = loadable(() => import('./routes/Home'));
-const GameView = loadable(() => import('./routes/Game'));
+const HomePage = loadable(() => import('./routes/Home'));
+const GamePage = loadable(() => import('./routes/Game/GamePage'));
 
 const App = () => {
   const [ws, setWs] = useState<WebSocket>(null);
@@ -29,6 +29,7 @@ const App = () => {
         const id = localStorage.getItem('id');
         const name = localStorage.getItem('name');
         const secret = localStorage.getItem('secret');
+        const leader = localStorage.getItem('leader');
         if (name && secret) {
           console.debug('Using existing credentials');
           setUser({
@@ -40,7 +41,7 @@ const App = () => {
           ws.send(
             JSON.stringify({
               type: 'reconnect',
-              payload: { user: { id, name, secret } },
+              payload: { user: { id, name, secret, leader } },
             } as Message)
           );
         }
@@ -72,6 +73,7 @@ const App = () => {
             localStorage.setItem('id', payload.id);
             localStorage.setItem('name', payload.name);
             localStorage.setItem('secret', payload.secret);
+            localStorage.setItem('leader', payload.leader);
             setError(null);
             break;
           }
@@ -132,10 +134,10 @@ const App = () => {
           {error && error.string}
           <Switch>
             <Route exact path="/">
-              <HomeView {...commonProps} />
+              <HomePage {...commonProps} />
             </Route>
             <Route path="/game">
-              <GameView {...commonProps} messages={messages} />
+              <GamePage {...commonProps} messages={messages} />
             </Route>
           </Switch>
         </Content>

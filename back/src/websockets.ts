@@ -26,13 +26,16 @@ interface User {
   name: string;
   iat: Date;
   socket: WebSocket;
+  leader: boolean;
 }
 
 interface Game {
   code: string;
+  leader: number;
   users: number[];
-  has_started: boolean;
+  started: boolean;
   turn: number;
+  view: string;
   chat: ChatMessageServer[];
 }
 
@@ -68,16 +71,98 @@ class WebSocketHandler {
       secret,
       iat: new Date(),
       socket,
+      leader: false,
     };
 
     return newUser;
   };
 
-  authenticate = (user: User) => {
-    return _.find(
+  authenticate = (ws: WebSocket, user: User) => {
+    if (!user) {
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          payload: {
+            type: 'USER_NOT_SUPPLIED',
+            string: 'User was not supplied',
+          },
+        })
+      );
+      return false;
+    }
+    const serverUser = _.find(
       this.users,
       (u) => u.id === user.id && u.secret === user.secret
     );
+
+    if (!serverUser) {
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          payload: {
+            type: 'AUTH',
+            string: 'User is not authenticated',
+          },
+        })
+      );
+      return false;
+    }
+
+    return serverUser;
+  };
+
+  isUserInGame = (ws: WebSocket, user: User, game: Game) => {
+    const serverUser = this.authenticate(ws, user);
+    if (!serverUser) return false;
+
+    // Find game;
+    if (!game) {
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          payload: {
+            type: 'CODE_MISSING',
+            string: 'Game code not supplied',
+          },
+        })
+      );
+      return false;
+    }
+
+    const serverGame = _.find(this.games, (g) => g.code === game);
+    if (!serverGame) {
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          payload: {
+            type: 'GAME_NOT_FOUND',
+            string: `Game ${game} not found`,
+          },
+        })
+      );
+      return false;
+    }
+
+    if (!_.find(serverGame.users, (u) => u === serverUser.id)) {
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          payload: {
+            type: 'USER_NOT_IN_GAME',
+            string: `User ${serverUser.name} is not in game ${game}`,
+          },
+        })
+      );
+      return false;
+    }
+
+    return { user: serverUser, game: serverGame };
+  };
+
+  isLeader = (ws: WebSocket, user: User, game: Game) => {
+    const r = this.isUserInGame(ws, user, game);
+    if (!r) return false;
+    return r.user.leader;
   };
 
   constructor(server) {
@@ -116,6 +201,9 @@ class WebSocketHandler {
             const user = this.register(ws, payload);
             if (!user) break;
 
+            // Game creator is the leader
+            user.leader = true;
+
             this.users.push(user);
 
             // Ensure a unique room code
@@ -127,8 +215,10 @@ class WebSocketHandler {
             const newGame: Game = {
               code,
               users: [user.id],
-              has_started: false,
-              turn: 0,
+              leader: user.id,
+              started: false,
+              turn: 1,
+              view: 'pregame',
               chat: [],
             };
 
@@ -149,6 +239,7 @@ class WebSocketHandler {
             );
             break;
           }
+          // New user joins an existing game
           case 'register-and-join': {
             const newUser = this.register(ws, payload.name);
             if (!newUser) break;
@@ -249,11 +340,48 @@ class WebSocketHandler {
             }
             break;
           }
+
+          case 'start-game': {
+            const { user: clientUser, game: clientGame } = payload;
+
+            const result = this.isUserInGame(ws, clientUser, clientGame);
+            if (!result) break;
+
+            const { user, game } = result;
+
+            // If user is authenticated and the leader of the game
+            // Start it
+            if (!user.leader) {
+              ws.send(
+                JSON.stringify({
+                  type: 'error',
+                  payload: {
+                    type: 'IS_NOT_LEADER',
+                    string: 'User is not the leader of the game',
+                  },
+                })
+              );
+            }
+
+            game.started = true;
+
+            game.view = 'draw';
+            game.waiting = _.copy(game.users);
+            game.users.forEach((u) => {
+              u.socket.send(
+                JSON.stringify({
+                  type: 'game',
+                  payload: game,
+                })
+              );
+            });
+            break;
+          }
           // User sent a message
           case 'client-message': {
             const clientMessage = payload as ChatMessageClient;
 
-            const chatUser: User = this.authenticate(clientMessage.user);
+            const chatUser: User = this.authenticate(ws, clientMessage.user);
             if (!chatUser) {
               ws.send(
                 JSON.stringify({
@@ -339,6 +467,20 @@ class WebSocketHandler {
                 u.socket.send(response);
               }
             });
+            break;
+          }
+          case 'leave': {
+            const { user } = payload;
+
+            const serverUser = this.authenticate(ws, user);
+            if (!serverUser) break;
+
+            ws.send(
+              JSON.stringify({
+                type: 'game',
+                payload: null,
+              } as Message)
+            );
             break;
           }
           default: {
