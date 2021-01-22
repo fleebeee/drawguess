@@ -28,6 +28,7 @@ interface User {
   id: number;
   secret: string;
   name: string;
+  leader: boolean;
   // iat: Date;
   // socket: WebSocket;
 }

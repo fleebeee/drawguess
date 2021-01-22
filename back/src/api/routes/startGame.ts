@@ -27,7 +27,8 @@ const startGame = (api, ws, payload) => {
   game.view = 'draw';
   game.waiting = _.copy(game.users);
   game.users.forEach((u) => {
-    u.socket.send(
+    const su = api.getUser(u);
+    su.socket.send(
       JSON.stringify({
         type: 'game',
         payload: game,

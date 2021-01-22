@@ -76,7 +76,7 @@ const clientMessage = (api, ws, payload) => {
 
   // Broadcast message to everyone
   chatGame.users.forEach((id) => {
-    const u = _.find(api.users, (u) => u.id === id);
+    const u = api.getUser(id);
     if (!u) {
       console.error(
         `User with ID ${id} was not found in game ${chatGame.code} when broadcasting`

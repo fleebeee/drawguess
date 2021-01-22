@@ -20,7 +20,7 @@ interface User {
   secret: string;
   name: string;
   iat: Date;
-  socket: WebSocket;
+  socket: import('ws'); // Just TypeScript things
   leader: boolean;
 }
 

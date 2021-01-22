@@ -3,6 +3,8 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid';
 
 import create from './routes/create';
+import register from './routes/register';
+import join from './routes/join';
 import registerAndJoin from './routes/registerAndJoin';
 import reconnect from './routes/reconnect';
 import startGame from './routes/startGame';
@@ -17,7 +19,11 @@ class WebSocketHandler {
   games: Game[];
   users: User[];
 
-  register = (socket, name) => {
+  getUser = (id: number) => {
+    return _.find(this.users, (u: User) => u.id === id);
+  };
+
+  register = (socket: WebSocket, name: string) => {
     // Generate a random secret that is used in all interactions
     const username = name;
     const secret = nanoid();
@@ -79,6 +85,13 @@ class WebSocketHandler {
     }
 
     return serverUser;
+  };
+
+  getCurrentGame = (ws: WebSocket, user: User) => {
+    const serverUser = this.authenticate(ws, user);
+    if (!serverUser) return false;
+
+    return _.find(this.games, (g) => _.find(g.users, (u) => u === user.id));
   };
 
   isUserInGame = (ws: WebSocket, user: User, game: Game) => {
@@ -161,7 +174,15 @@ class WebSocketHandler {
             create(this, ws, payload);
             break;
           }
-          // New user joins an existing game
+          case 'register': {
+            register(this, ws, payload);
+            break;
+          }
+          case 'join': {
+            join(this, ws, payload);
+            break;
+          }
+          // Legacy
           case 'register-and-join': {
             registerAndJoin(this, ws, payload);
             break;
