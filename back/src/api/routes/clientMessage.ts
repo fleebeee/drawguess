@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import WebSocket from 'ws';
 
 const clientMessage = (api, ws, payload) => {
   const clientMessage = payload as ChatMessageClient;

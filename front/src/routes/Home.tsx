@@ -6,24 +6,52 @@ const Home = (props) => {
   const { ws, user, game } = props;
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
+  const [deferredCreate, setDeferredCreate] = useState<boolean>(false);
+  const [deferredJoin, setDeferredJoin] = useState<boolean>(false);
 
   const handleCreate = async () => {
     ws.send(
       JSON.stringify({
-        type: 'create-game',
-        payload: name,
+        type: 'register',
+        payload: { name },
       } as Message)
     );
+    setDeferredCreate(true);
   };
+
+  useEffect(() => {
+    if (deferredCreate && user) {
+      ws.send(
+        JSON.stringify({
+          type: 'create-game',
+          payload: { user },
+        } as Message)
+      );
+      setDeferredCreate(false);
+    }
+  }, [user]);
 
   const handleGo = () => {
     ws.send(
       JSON.stringify({
-        type: 'register-and-join',
-        payload: { name, code },
+        type: 'register',
+        payload: { name },
       } as Message)
     );
+    setDeferredJoin(true);
   };
+
+  useEffect(() => {
+    if (deferredJoin && user) {
+      ws.send(
+        JSON.stringify({
+          type: 'join',
+          payload: { user, code },
+        } as Message)
+      );
+      setDeferredJoin(false);
+    }
+  });
 
   const handleNameChange = (event) => {
     setName(event.target.value);

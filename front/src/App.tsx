@@ -36,6 +36,7 @@ const App = () => {
             id: parseInt(id, 10),
             name,
             secret,
+            leader: !!leader,
           });
 
           ws.send(
@@ -73,7 +74,7 @@ const App = () => {
             localStorage.setItem('id', payload.id);
             localStorage.setItem('name', payload.name);
             localStorage.setItem('secret', payload.secret);
-            localStorage.setItem('leader', payload.leader);
+            localStorage.setItem('leader', payload.leader ? 1 : 0);
             setError(null);
             break;
           }
