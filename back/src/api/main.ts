@@ -165,9 +165,10 @@ class WebSocketHandler {
       // );
 
       ws.on('message', (message: string) => {
-        console.log(`Received message ${message}`);
         const m: Message = JSON.parse(message);
         const { type, payload } = m;
+
+        console.debug(`Received message\n${type}:`, payload);
 
         switch (type) {
           case 'create-game': {

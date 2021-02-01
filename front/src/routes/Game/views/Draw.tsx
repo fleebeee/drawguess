@@ -2,12 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
-const PreGame = ({ ws, game, user }) => {
-  console.debug('||DEBUG: [user]', user);
+import Drawboard from '../components/Drawboard/Drawboard';
+
+const Draw = ({ ws, game, user }) => {
+  const handleStart = () => {
+    ws.send(
+      JSON.stringify({
+        type: 'start-game',
+        payload: { user, game: game.code },
+      } as Message)
+    );
+  };
+
   return (
     <GameBox>
       <PlayerList>kek</PlayerList>
-      {user && user.leader && <Start>Start game!</Start>}
+      <div>Draw :)</div>
+      <Drawboard />
     </GameBox>
   );
 };
@@ -24,4 +35,4 @@ const PlayerList = styled.ul``;
 
 const Start = styled.div``;
 
-export default PreGame;
+export default Draw;

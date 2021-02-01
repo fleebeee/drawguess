@@ -4,7 +4,7 @@
   "description": "drawguess front in React",
   "main": "index.js",
   "scripts": {
-    "start:dev": "cp dev_template.html dist/index.html && NODE_ENV=development webpack-dev-server --display errors-only --config webpack.dev.js",
+    "start": "cp dev_template.html dist/index.html && NODE_ENV=development webpack-dev-server --display errors-only --config webpack.dev.js",
     "build:client": "NODE_ENV=production node node_modules/webpack/bin/webpack.js --progress --config webpack.prod.js",
     "build:server": "NODE_ENV=production node node_modules/webpack/bin/webpack.js --progress --config webpack.server.js",
     "build:prod": "npm run build:client && npm run build:server",

@@ -26,6 +26,14 @@ const create = (api, ws, payload) => {
 
   api.games.push(newGame);
 
+  // Update player status to leader
+  ws.send(
+    JSON.stringify({
+      type: 'user',
+      payload: serverUser,
+    } as Message)
+  );
+
   ws.send(
     JSON.stringify({
       type: 'game',

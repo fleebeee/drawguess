@@ -52,7 +52,7 @@ const App = () => {
         const m: Message = JSON.parse(event.data);
         const { type, payload } = m;
 
-        console.debug('||DEBUG: [type, payload]', type, payload);
+        console.debug(`Received message\n${type}:`, payload);
 
         switch (type) {
           case 'chatMessages': {

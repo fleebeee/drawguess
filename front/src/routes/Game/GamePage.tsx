@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useLocation, Redirect } from 'react-router-dom';
 
-import PreGame from './PreGame';
+import PreGame from './views/PreGame';
+import Draw from './views/Draw';
 
 const GameView = ({ ws, game, user, error, loading, messages }) => {
   const [input, setInput] = useState('');
@@ -95,6 +96,9 @@ const GameView = ({ ws, game, user, error, loading, messages }) => {
     switch (game.view) {
       case 'pregame': {
         return <PreGame ws={ws} game={game} user={user} />;
+      }
+      case 'draw': {
+        return <Draw ws={ws} game={game} user={user} />;
       }
       default:
         return null;
