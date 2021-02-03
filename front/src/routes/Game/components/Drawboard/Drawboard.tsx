@@ -4,12 +4,46 @@ import styled from 'styled-components';
 const width = 500;
 const height = 500;
 
+const drawBrush = (ctx, x, y, prevX, prevY) => {
+  ctx.beginPath();
+  ctx.ellipse(x, y, 10, 10, 0, 0, 2 * Math.PI);
+
+  // If brush is already down, tween the positions
+  // Approximately one ellipse per pixel
+  if (prevX && prevY) {
+    const xd = x - prevX;
+    const yd = y - prevY;
+    const d = Math.sqrt(Math.abs(xd) + Math.abs(yd));
+    const count = Math.ceil(d);
+
+    for (let i = 0; i < count; ++i) {
+      ctx.ellipse(
+        x - (i / count) * xd,
+        y - (i / count) * yd,
+        10,
+        10,
+        0,
+        0,
+        2 * Math.PI
+      );
+    }
+  }
+
+  ctx.fill();
+};
+
 const Drawboard = () => {
   const [initialized, setInitialized] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [canvas, setCanvas] = useState<HTMLCanvasElement>();
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
   const [boundings, setBoundings] = useState<DOMRect>();
+  const [prevX, setPrevX] = useState(null);
+  const [prevY, setPrevY] = useState(null);
+  const prevXRef = useRef();
+  prevXRef.current = prevX;
+  const prevYRef = useRef();
+  prevYRef.current = prevY;
   const ctxRef = useRef<CanvasRenderingContext2D>();
   ctxRef.current = ctx;
   const bRef = useRef<DOMRect>();
@@ -43,35 +77,42 @@ const Drawboard = () => {
     const con = can.getContext('2d');
 
     setCanvas(can);
-    setCtx(con);
     con.fillStyle = '#FFFFFF';
     con.fillRect(0, 0, width, height);
+    con.lineWidth = 10;
+    setCtx(con);
 
     setBoundings(can.getBoundingClientRect());
 
-    con.strokeStyle = 'black'; // initial brush color
+    con.fillStyle = 'black'; // initial brush color
     con.lineWidth = 1; // initial brush width
 
     can.addEventListener('mousedown', (event) => {
       const [x, y] = getXY(event);
       setIsDrawing(true);
 
-      // Start Drawing
-      ctxRef.current.beginPath();
-      ctxRef.current.moveTo(x, y);
+      // Draw initial dot
+      drawBrush(ctxRef.current, x, y, prevX, prevY);
+
+      setPrevX(x);
+      setPrevY(y);
     });
 
     can.addEventListener('mousemove', (event) => {
       const [x, y] = getXY(event);
 
       if (isDrawingRef.current) {
-        ctxRef.current.lineTo(x, y);
-        ctxRef.current.stroke();
+        drawBrush(ctxRef.current, x, y, prevXRef.current, prevYRef.current);
+
+        setPrevX(x);
+        setPrevY(y);
       }
     });
 
     can.addEventListener('mouseup', function (event) {
       setIsDrawing(false);
+      setPrevX(null);
+      setPrevY(null);
     });
     // TODO Remove listeners
   }, []);
