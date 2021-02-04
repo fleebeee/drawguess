@@ -1,5 +1,7 @@
-import React, { useState, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
+
+import Controls from './Controls';
 
 const width = 500;
 const height = 500;
@@ -19,6 +21,9 @@ const Drawboard = () => {
   const [boundings, setBoundings] = useState<DOMRect>();
   const [prevX, setPrevX] = useState(null);
   const [prevY, setPrevY] = useState(null);
+  const [color, setColor] = useState('black');
+
+  // Refs for listeners
   const prevXRef = useRef();
   prevXRef.current = prevX;
   const prevYRef = useRef();
@@ -63,8 +68,7 @@ const Drawboard = () => {
 
     setBoundings(can.getBoundingClientRect());
 
-    con.fillStyle = 'black'; // initial brush color
-    con.strokeStyle = 'black';
+    con.strokeStyle = color;
     con.lineCap = 'round';
 
     can.addEventListener('mousedown', (event) => {
@@ -96,18 +100,6 @@ const Drawboard = () => {
     });
     // TODO Remove listeners
   }, []);
-  // Mouse Down Event
-
-  //   // Mouse Move Event
-
-  //   // Mouse Up Event
-
-  //   // Handle Mouse Coordinates
-  //   function setMouseCoordinates(event) {
-  //     mouseX = event.clientX - boundings.left;
-  //     mouseY = event.clientY - boundings.top;
-  //   }
-
   //   // Handle Clear Button
   //   var clearButton = document.getElementById('clear');
 
@@ -128,14 +120,25 @@ const Drawboard = () => {
   //   });
   // };
 
-  return <Canvas id="drawboard" width={width} height={height} />;
+  useEffect(() => {
+    if (ctxRef.current) ctxRef.current.strokeStyle = color;
+  }, [color]);
+
+  return (
+    <Wrapper>
+      <Controls setColor={setColor} />
+      <Canvas id="drawboard" width={width} height={height} />
+    </Wrapper>
+  );
 };
 
-const Canvas = styled.canvas`
+const Wrapper = styled.div`
   margin: 0 auto;
-  display: flex;
   width: ${width}px;
   height: ${height}px;
+`;
+
+const Canvas = styled.canvas`
   // cursor: url(./myCursor.cur), none;
 `;
 
