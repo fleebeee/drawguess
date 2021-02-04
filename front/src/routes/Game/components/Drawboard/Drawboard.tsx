@@ -6,30 +6,9 @@ const height = 500;
 
 const drawBrush = (ctx, x, y, prevX, prevY) => {
   ctx.beginPath();
-  ctx.ellipse(x, y, 10, 10, 0, 0, 2 * Math.PI);
-
-  // If brush is already down, tween the positions
-  // Approximately one ellipse per pixel
-  if (prevX && prevY) {
-    const xd = x - prevX;
-    const yd = y - prevY;
-    const d = Math.sqrt(Math.abs(xd) + Math.abs(yd));
-    const count = Math.ceil(d);
-
-    for (let i = 0; i < count; ++i) {
-      ctx.ellipse(
-        x - (i / count) * xd,
-        y - (i / count) * yd,
-        10,
-        10,
-        0,
-        0,
-        2 * Math.PI
-      );
-    }
-  }
-
-  ctx.fill();
+  ctx.moveTo(prevX || x, prevY || y);
+  ctx.lineTo(x, y);
+  ctx.stroke();
 };
 
 const Drawboard = () => {
@@ -79,13 +58,14 @@ const Drawboard = () => {
     setCanvas(can);
     con.fillStyle = '#FFFFFF';
     con.fillRect(0, 0, width, height);
-    con.lineWidth = 10;
+    con.lineWidth = 20;
     setCtx(con);
 
     setBoundings(can.getBoundingClientRect());
 
     con.fillStyle = 'black'; // initial brush color
-    con.lineWidth = 1; // initial brush width
+    con.strokeStyle = 'black';
+    con.lineCap = 'round';
 
     can.addEventListener('mousedown', (event) => {
       const [x, y] = getXY(event);
