@@ -10,6 +10,7 @@ import reconnect from './routes/reconnect';
 import startGame from './routes/startGame';
 import clientMessage from './routes/clientMessage';
 import leave from './routes/leave';
+import submitDrawing from './routes/submitDrawing';
 
 class WebSocketHandler {
   MAX_MESSAGES: number;
@@ -203,6 +204,10 @@ class WebSocketHandler {
           }
           case 'leave': {
             leave(this, ws, payload);
+            break;
+          }
+          case 'submit-drawing': {
+            submitDrawing(this, ws, payload);
             break;
           }
           default: {

@@ -137,10 +137,10 @@ const App = () => {
             {error && error.string}
             <Switch>
               <Route exact path="/">
-                <HomePage {...commonProps} />
+                <HomePage />
               </Route>
               <Route path="/game">
-                <GamePage {...commonProps} messages={messages} />
+                <GamePage messages={messages} />
               </Route>
             </Switch>
           </Content>

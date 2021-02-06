@@ -12,6 +12,13 @@ const submitDrawing = (api, ws, payload) => {
 
   const { user, game } = result;
 
+  // TODO Cache drawings somehow
+  game.drawings.push({
+    author: user.id,
+    data,
+    round: game.round,
+  });
+
   game.waiting = game.waiting.filter((id) => id !== user.id);
 
   if (game.waiting.length === 0) {

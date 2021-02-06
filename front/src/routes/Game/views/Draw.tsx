@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
+import CommonContext from '~utils/CommonContext';
 
 import Drawboard from '../components/Drawboard/Drawboard';
 
-const Draw = ({ ws, game, user }) => {
+const Draw = () => {
+  const { ws, game, user, error, loading } = useContext(CommonContext);
+
   return (
     <GameBox>
       <PlayerList>kek</PlayerList>

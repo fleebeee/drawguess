@@ -112,7 +112,7 @@ const Drawboard = () => {
     ws.send(
       JSON.stringify({
         type: 'submit-drawing',
-        payload: { user, game, data },
+        payload: { user, game: game.code, data },
       } as Message)
     );
   };

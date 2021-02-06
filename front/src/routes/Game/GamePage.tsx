@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation, Redirect } from 'react-router-dom';
 
+import CommonContext from '~utils/CommonContext';
+
 import PreGame from './views/PreGame';
 import Draw from './views/Draw';
+import Guess from './views/Guess';
 
-const GameView = ({ ws, game, user, error, loading, messages }) => {
+const GameView = ({ messages }) => {
   const [input, setInput] = useState('');
   const [name, setName] = useState('');
   const location = useLocation();
+  const { ws, game, user, error, loading } = useContext(CommonContext);
 
   const sendMessage = (content) => {
     try {
@@ -95,10 +99,13 @@ const GameView = ({ ws, game, user, error, loading, messages }) => {
   const getGameView = (game) => {
     switch (game.view) {
       case 'pregame': {
-        return <PreGame ws={ws} game={game} user={user} />;
+        return <PreGame />;
       }
       case 'draw': {
-        return <Draw ws={ws} game={game} user={user} />;
+        return <Draw />;
+      }
+      case 'guess': {
+        return <Guess />;
       }
       default:
         return null;

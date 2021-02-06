@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
+import CommonContext from '~utils/CommonContext';
 
-const Home = (props) => {
-  const { ws, user, game } = props;
+const Home = () => {
+  const { ws, user, game } = useContext(CommonContext);
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [deferredCreate, setDeferredCreate] = useState<boolean>(false);
