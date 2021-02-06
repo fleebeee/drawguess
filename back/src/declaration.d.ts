@@ -24,12 +24,19 @@ interface User {
   leader: boolean;
 }
 
+interface Drawing {
+  author: number;
+  data: string; // dataURL
+  round: number;
+}
+
 interface Game {
   code: string;
   leader: number;
   users: number[];
   started: boolean;
-  turn: number;
+  round: number;
   view: string;
+  drawings: Drawing[];
   chat: ChatMessageServer[];
 }

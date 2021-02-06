@@ -128,7 +128,6 @@ const GameView = ({ ws, game, user, error, loading, messages }) => {
 };
 
 const GameBox = styled.ul`
-  height: 600px;
   background-color: var(--main-700);
 `;
 

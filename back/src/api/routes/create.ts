@@ -16,10 +16,11 @@ const create = (api, ws, payload) => {
 
   const newGame: Game = {
     code,
+    drawings: [],
     users: [serverUser.id],
     leader: serverUser.id,
     started: false,
-    turn: 1,
+    round: 1,
     view: 'pregame',
     chat: [],
   };

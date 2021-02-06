@@ -1,5 +1,12 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useContext,
+} from 'react';
 import styled from 'styled-components';
+import CommonContext from '~utils/CommonContext';
 
 import Controls from './Controls';
 
@@ -22,6 +29,7 @@ const Drawboard = () => {
   const [prevX, setPrevX] = useState(null);
   const [prevY, setPrevY] = useState(null);
   const [color, setColor] = useState('black');
+  const { ws, user, game, error, loading } = useContext(CommonContext);
 
   // Refs for listeners
   const prevXRef = useRef();
@@ -42,20 +50,6 @@ const Drawboard = () => {
     ];
   };
 
-  //   // Handle Colors
-  //   var colors = document.getElementsByClassName('colors')[0];
-
-  //   colors.addEventListener('click', function(event) {
-  //     context.strokeStyle = event.target.value || 'black';
-  //   });
-
-  //   // Handle Brushes
-  //   var brushes = document.getElementsByClassName('brushes')[0];
-
-  //   brushes.addEventListener('click', function(event) {
-  //     context.lineWidth = event.target.value || 1;
-  //   });
-
   useLayoutEffect(() => {
     const can = document.getElementById('drawboard') as HTMLCanvasElement;
     const con = can.getContext('2d');
@@ -64,14 +58,13 @@ const Drawboard = () => {
     con.fillStyle = '#FFFFFF';
     con.fillRect(0, 0, width, height);
     con.lineWidth = 20;
+    con.strokeStyle = color;
+    con.lineCap = 'round';
     setCtx(con);
 
     setBoundings(can.getBoundingClientRect());
 
-    con.strokeStyle = color;
-    con.lineCap = 'round';
-
-    can.addEventListener('mousedown', (event) => {
+    const handleMouseDown = (event) => {
       const [x, y] = getXY(event);
       setIsDrawing(true);
 
@@ -80,9 +73,9 @@ const Drawboard = () => {
 
       setPrevX(x);
       setPrevY(y);
-    });
+    };
 
-    can.addEventListener('mousemove', (event) => {
+    const handleMouseMove = (event) => {
       const [x, y] = getXY(event);
 
       if (isDrawingRef.current) {
@@ -91,34 +84,38 @@ const Drawboard = () => {
         setPrevX(x);
         setPrevY(y);
       }
-    });
+    };
 
-    can.addEventListener('mouseup', function (event) {
+    const handleMouseUp = () => {
       setIsDrawing(false);
       setPrevX(null);
       setPrevY(null);
-    });
-    // TODO Remove listeners
+    };
+
+    can.addEventListener('mousedown', handleMouseDown);
+    can.addEventListener('mousemove', handleMouseMove);
+    can.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      can.removeEventListener('mousedown', handleMouseDown);
+      can.removeEventListener('mousemove', handleMouseMove);
+      can.removeEventListener('mouseup', handleMouseUp);
+    };
   }, []);
-  //   // Handle Clear Button
-  //   var clearButton = document.getElementById('clear');
 
   //   clearButton.addEventListener('click', function() {
   //     context.clearRect(0, 0, canvas.width, canvas.height);
   //   });
 
-  //   // Handle Save Button
-  //   var saveButton = document.getElementById('save');
-
-  //   saveButton.addEventListener('click', function() {
-  //     var imageName = prompt('Please enter image name');
-  //     var canvasDataURL = canvas.toDataURL();
-  //     var a = document.createElement('a');
-  //     a.href = canvasDataURL;
-  //     a.download = imageName || 'drawing';
-  //     a.click();
-  //   });
-  // };
+  const handleSubmit = () => {
+    const data = canvas.toDataURL();
+    ws.send(
+      JSON.stringify({
+        type: 'submit-drawing',
+        payload: { user, game, data },
+      } as Message)
+    );
+  };
 
   useEffect(() => {
     if (ctxRef.current) ctxRef.current.strokeStyle = color;
@@ -128,6 +125,7 @@ const Drawboard = () => {
     <Wrapper>
       <Controls setColor={setColor} />
       <Canvas id="drawboard" width={width} height={height} />
+      <a onClick={handleSubmit}>Submit</a>
     </Wrapper>
   );
 };
@@ -135,7 +133,6 @@ const Drawboard = () => {
 const Wrapper = styled.div`
   margin: 0 auto;
   width: ${width}px;
-  height: ${height}px;
 `;
 
 const Canvas = styled.canvas`

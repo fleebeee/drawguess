@@ -8,7 +8,7 @@ const leave = (api, ws, payload) => {
 
   const game = api.getCurrentGame(ws, user);
   if (game) {
-    game.users = _.remove(game.users, (id) => id === user.id);
+    game.users = game.users.filter((id) => id !== serverUser.id);
   }
 
   ws.send(

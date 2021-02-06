@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
-
 import loadable from '@loadable/component';
+
+import CommonContext from '~utils/CommonContext';
 
 // Lazy load routes
 const HomePage = loadable(() => import('./routes/Home'));
@@ -131,17 +132,19 @@ const App = () => {
     <>
       <React.StrictMode>
         <GlobalStyle />
-        <Content>
-          {error && error.string}
-          <Switch>
-            <Route exact path="/">
-              <HomePage {...commonProps} />
-            </Route>
-            <Route path="/game">
-              <GamePage {...commonProps} messages={messages} />
-            </Route>
-          </Switch>
-        </Content>
+        <CommonContext.Provider value={commonProps}>
+          <Content>
+            {error && error.string}
+            <Switch>
+              <Route exact path="/">
+                <HomePage {...commonProps} />
+              </Route>
+              <Route path="/game">
+                <GamePage {...commonProps} messages={messages} />
+              </Route>
+            </Switch>
+          </Content>
+        </CommonContext.Provider>
       </React.StrictMode>
     </>
   );

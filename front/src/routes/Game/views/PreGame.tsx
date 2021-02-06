@@ -24,7 +24,6 @@ const GameBox = styled.ul`
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  height: 600px;
   background-color: var(--main-700);
 `;
 
