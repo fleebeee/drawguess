@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import CommonContext from '~utils/CommonContext';
+import PlayerList from '~components/PlayerList';
 
 const PreGame = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
@@ -17,7 +18,7 @@ const PreGame = () => {
 
   return (
     <GameBox>
-      <PlayerList>kek</PlayerList>
+      <PlayerList />
       {user && user.leader && <Start onClick={handleStart}>Start game!</Start>}
     </GameBox>
   );
@@ -29,8 +30,6 @@ const GameBox = styled.ul`
   flex-direction: column;
   background-color: var(--main-700);
 `;
-
-const PlayerList = styled.ul``;
 
 const Start = styled.div``;
 
