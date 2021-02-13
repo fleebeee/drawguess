@@ -30,11 +30,24 @@ interface Drawing {
   round: number;
 }
 
-interface Game {
+interface ServerGame {
   code: string;
-  leader: number;
-  users: number[];
+  leader: User;
+  users: User[];
   started: boolean;
+  turn: number;
+  round: number;
+  view: string;
+  drawings: Drawing[];
+  chat: ChatMessageServer[];
+}
+
+interface ClientGame {
+  code: string;
+  leader: User;
+  users: User[];
+  started: boolean;
+  turn: number;
   round: number;
   view: string;
   drawings: Drawing[];
