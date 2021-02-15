@@ -1,12 +1,13 @@
 import _ from 'lodash';
 
+import User from '../models/User';
+import Game from '../models/Game';
+
 const startGame = (api, ws, payload) => {
-  const { user: clientUser, game: clientGame } = payload;
+  const { user: clientUser } = payload;
 
-  const result = api.isUserInGame(ws, clientUser, clientGame);
-  if (!result) return false;
-
-  const { user, game } = result;
+  const user = api.authenticate(ws, clientUser);
+  if (!user) return false;
 
   // If user is authenticated and the leader of the game
   // Start it
@@ -22,19 +23,14 @@ const startGame = (api, ws, payload) => {
     );
   }
 
+  const { game } = user;
+
   game.started = true;
 
   game.view = 'draw';
   game.waiting = [...game.users];
-  game.users.forEach((u) => {
-    const su = api.getUser(u);
-    su.socket.send(
-      JSON.stringify({
-        type: 'game',
-        payload: game,
-      })
-    );
-  });
+  game.send();
+
   return game;
 };
 

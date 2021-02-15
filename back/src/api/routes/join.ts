@@ -1,9 +1,12 @@
 import _ from 'lodash';
 
+import User from '../models/User';
+import Game from '../models/Game';
+
 const join = (api, ws, payload) => {
   const { user, code } = payload;
 
-  const serverUser = api.authenticate(ws, user);
+  const serverUser: User = api.authenticate(ws, user);
   if (!serverUser) return false;
 
   const game: Game = _.find(api.games, (g: Game) => g.code === code);
@@ -16,19 +19,15 @@ const join = (api, ws, payload) => {
           type: 'GAME_NOT_FOUND',
           string: `Game ${code} not found`,
         },
-      } as Message)
+      })
     );
     return false;
   }
 
   game.users.push(user.id);
 
-  ws.send(
-    JSON.stringify({
-      type: 'game',
-      payload: game,
-    } as Message)
-  );
+  // Send new game data to everyone in the game
+  game.send();
 
   return game;
 };

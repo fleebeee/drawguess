@@ -1,9 +1,12 @@
 import _ from 'lodash';
 
+import User from '../models/User';
+import Game from '../models/Game';
+
 const reconnect = (api, ws, payload) => {
   const { user } = payload;
 
-  const oldUser = _.find(api.users, (u) => u.id == parseInt(user.id, 10));
+  const oldUser: User = _.find(api.users, (u) => u.id == parseInt(user.id, 10));
 
   if (!oldUser) {
     // Just reset the old user and game
@@ -11,30 +14,28 @@ const reconnect = (api, ws, payload) => {
       JSON.stringify({
         type: 'user',
         payload: null,
-      } as Message)
+      })
     );
     ws.send(
       JSON.stringify({
         type: 'game',
         payload: null,
-      } as Message)
+      })
     );
     return false;
   }
 
-  const game = _.find(api.games, (g) =>
-    _.find(g.users, (u) => u === parseInt(user.id, 10))
-  );
+  // Replace socket with new one
+  oldUser.socket = ws;
+
+  const { game } = oldUser;
 
   if (game) {
-    // Replace socket with new one
-    oldUser.socket = ws;
-
     ws.send(
       JSON.stringify({
         type: 'game',
         payload: game,
-      } as Message)
+      })
     );
     return false;
   }
@@ -45,17 +46,16 @@ const reconnect = (api, ws, payload) => {
       JSON.stringify({
         type: 'user',
         payload: null,
-      } as Message)
+      })
     );
     ws.send(
       JSON.stringify({
         type: 'game',
         payload: null,
-      } as Message)
+      })
     );
     return null;
   }
-  return false;
 };
 
 export default reconnect;

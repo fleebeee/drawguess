@@ -1,11 +1,14 @@
 import _ from 'lodash';
 import WebSocket from 'ws';
 
-const clientMessage = (api, ws, payload) => {
-  const clientMessage = payload as ChatMessageClient;
+import User from '../models/User';
+import Message from '../models/Message';
 
-  const chatUser: User = api.authenticate(ws, clientMessage.user);
-  if (!chatUser) {
+const clientMessage = (api, ws, payload) => {
+  const message: Message = payload;
+
+  const user: User = api.authenticate(ws, message.author);
+  if (!user) {
     ws.send(
       JSON.stringify({
         type: 'error',
@@ -19,75 +22,24 @@ const clientMessage = (api, ws, payload) => {
   }
 
   // Find game
-  const gameCode = payload.gameCode;
-  if (!gameCode) {
-    ws.send(
-      JSON.stringify({
-        type: 'error',
-        payload: {
-          type: 'CODE_MISSING',
-          string: 'Game code not supplied',
-        },
-      })
-    );
-    return false;
-  }
-
-  const chatGame: Game = _.find(api.games, (g) => g.code === gameCode);
-  if (!chatGame) {
-    ws.send(
-      JSON.stringify({
-        type: 'error',
-        payload: {
-          type: 'GAME_NOT_FOUND',
-          string: `Game ${gameCode} not found`,
-        },
-      })
-    );
-    return false;
-  }
-
-  if (!_.find(chatGame.users, (u) => u === chatUser.id)) {
+  const { game } = user;
+  if (!game) {
     ws.send(
       JSON.stringify({
         type: 'error',
         payload: {
           type: 'USER_NOT_IN_GAME',
-          string: `User ${chatUser.name} is not in game ${gameCode}`,
+          string: 'User is not in a game',
         },
       })
     );
     return false;
   }
 
-  // If we want to process the message somehow, do it here
-  const serverMessage: ChatMessageServer = {
-    content: clientMessage.content,
-    author: chatUser.name,
-    id: api.messageId++,
-    date: new Date().toString(),
-  };
-
-  const response = JSON.stringify({
-    payload: serverMessage,
-    type: 'chatMessage',
-  } as Message);
-
-  chatGame.chat.push(serverMessage);
-
-  // Broadcast message to everyone
-  chatGame.users.forEach((id) => {
-    const u = api.getUser(id);
-    if (!u) {
-      console.error(
-        `User with ID ${id} was not found in game ${chatGame.code} when broadcasting`
-      );
-    }
-    if (u.socket.readyState === WebSocket.OPEN) {
-      u.socket.send(response);
-    }
+  game.chat.add({
+    content: message.content,
+    author: user,
   });
-  return chatGame;
 };
 
 export default clientMessage;

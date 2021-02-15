@@ -1,12 +1,14 @@
 import _ from 'lodash';
 import { generateRoomCode } from '../utils';
+import User from '../models/User';
+import Game from '../models/Game';
 
 const create = (api, ws, payload) => {
-  const serverUser = api.authenticate(ws, payload.user);
-  if (!serverUser) return false;
+  const user = api.authenticate(ws, payload.user);
+  if (!user) return false;
 
   // Game creator is the leader
-  serverUser.leader = true;
+  user.leader = true;
 
   // Ensure a unique room code
   let code = generateRoomCode();
@@ -14,35 +16,19 @@ const create = (api, ws, payload) => {
     code = generateRoomCode();
   }
 
-  const newGame: Game = {
+  const game = new Game({
+    leader: user,
     code,
-    drawings: [],
-    users: [serverUser.id],
-    leader: serverUser.id,
-    started: false,
-    round: 1,
-    view: 'pregame',
-    chat: [],
-  };
+  });
 
-  api.games.push(newGame);
+  api.games.push(game);
+  user.game = game;
 
   // Update player status to leader
-  ws.send(
-    JSON.stringify({
-      type: 'user',
-      payload: serverUser,
-    } as Message)
-  );
+  user.send();
+  game.send();
 
-  ws.send(
-    JSON.stringify({
-      type: 'game',
-      payload: newGame,
-    } as Message)
-  );
-
-  return newGame;
+  return game;
 };
 
 export default create;

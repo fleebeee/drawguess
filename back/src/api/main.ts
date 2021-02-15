@@ -2,10 +2,12 @@ import WebSocket from 'ws';
 import _ from 'lodash';
 import { nanoid } from 'nanoid';
 
+import User from './models/User';
+import Game from './models/Game';
+
 import create from './routes/create';
 import register from './routes/register';
 import join from './routes/join';
-import registerAndJoin from './routes/registerAndJoin';
 import reconnect from './routes/reconnect';
 import startGame from './routes/startGame';
 import clientMessage from './routes/clientMessage';
@@ -17,6 +19,7 @@ class WebSocketHandler {
   lobbyId: number;
   userId: number;
   messageId: number;
+  drawingId: number;
   games: Game[];
   users: User[];
 
@@ -25,16 +28,14 @@ class WebSocketHandler {
   };
 
   register = (socket: WebSocket, name: string) => {
-    // Generate a random secret that is used in all interactions
     const username = name;
-    const secret = nanoid();
 
     if (_.find(this.users, (user: User) => user.name === username)) {
       socket.send(
         JSON.stringify({
           type: 'error',
           payload: {
-            type: 'USER_NAME_NOT_AVAILABLE',
+            type: 'USERNAME_NOT_AVAILABLE',
             string: 'Username is already in use',
           },
         })
@@ -42,16 +43,15 @@ class WebSocketHandler {
       return null;
     }
 
-    const newUser: User = {
+    const user = new User({
       id: this.userId++,
       name: username,
-      secret,
-      iat: new Date(),
       socket,
-      leader: false,
-    };
+    });
 
-    return newUser;
+    this.users.push(user);
+
+    return user;
   };
 
   authenticate = (ws: WebSocket, user: User) => {
@@ -67,7 +67,8 @@ class WebSocketHandler {
       );
       return false;
     }
-    const serverUser = _.find(
+
+    const serverUser: User = _.find(
       this.users,
       (u) => u.id === user.id && u.secret === user.secret
     );
@@ -77,7 +78,7 @@ class WebSocketHandler {
         JSON.stringify({
           type: 'error',
           payload: {
-            type: 'AUTH',
+            type: 'AUTH_ERROR',
             string: 'User is not authenticated',
           },
         })
@@ -86,67 +87,6 @@ class WebSocketHandler {
     }
 
     return serverUser;
-  };
-
-  getCurrentGame = (ws: WebSocket, user: User) => {
-    const serverUser = this.authenticate(ws, user);
-    if (!serverUser) return false;
-
-    return _.find(this.games, (g) => _.find(g.users, (u) => u === user.id));
-  };
-
-  isUserInGame = (ws: WebSocket, user: User, game: Game) => {
-    const serverUser = this.authenticate(ws, user);
-    if (!serverUser) return false;
-
-    // Find game;
-    if (!game) {
-      ws.send(
-        JSON.stringify({
-          type: 'error',
-          payload: {
-            type: 'CODE_MISSING',
-            string: 'Game code not supplied',
-          },
-        })
-      );
-      return false;
-    }
-
-    const serverGame = _.find(this.games, (g) => g.code === game);
-    if (!serverGame) {
-      ws.send(
-        JSON.stringify({
-          type: 'error',
-          payload: {
-            type: 'GAME_NOT_FOUND',
-            string: `Game ${game} not found`,
-          },
-        })
-      );
-      return false;
-    }
-
-    if (!_.find(serverGame.users, (u) => u === serverUser.id)) {
-      ws.send(
-        JSON.stringify({
-          type: 'error',
-          payload: {
-            type: 'USER_NOT_IN_GAME',
-            string: `User ${serverUser.name} is not in game ${game}`,
-          },
-        })
-      );
-      return false;
-    }
-
-    return { user: serverUser, game: serverGame };
-  };
-
-  isLeader = (ws: WebSocket, user: User, game: Game) => {
-    const r = this.isUserInGame(ws, user, game);
-    if (!r) return false;
-    return r.user.leader;
   };
 
   constructor(server) {
@@ -166,7 +106,7 @@ class WebSocketHandler {
       // );
 
       ws.on('message', (message: string) => {
-        const m: Message = JSON.parse(message);
+        const m = JSON.parse(message);
         const { type, payload } = m;
 
         console.debug(`Received message\n${type}:`, payload);
@@ -182,11 +122,6 @@ class WebSocketHandler {
           }
           case 'join': {
             join(this, ws, payload);
-            break;
-          }
-          // Legacy
-          case 'register-and-join': {
-            registerAndJoin(this, ws, payload);
             break;
           }
           case 'reconnect': {
