@@ -9,12 +9,13 @@ class Drawing {
   turn: number;
   game: Game;
 
-  constructor(author, data, round, turn, game) {
+  constructor({ author, data, round, turn, game, id }) {
     this.author = author;
     this.data = data;
     this.round = round;
     this.turn = turn;
     this.game = game;
+    this.id = id;
   }
 
   forClient() {

@@ -9,7 +9,7 @@ const PlayerList = () => {
   return (
     <Container>
       {game.users.map((user) => (
-        <div>{user}</div>
+        <div key={user}>{user}</div>
       ))}
     </Container>
   );

@@ -1,25 +1,31 @@
 import _ from 'lodash';
 
+import Drawing from '../models/Drawing';
+
 const submitDrawing = (api, ws, payload) => {
   const { user: clientUser, game: clientGame, data } = payload;
 
-  const result = api.isUserInGame(ws, clientUser, clientGame);
-  if (!result) return false;
-
-  // TODO check that we're in drawing phase
+  const user = api.authenticate(ws, clientUser);
+  if (!user) return false;
 
   // TODO that a previous image hasn't been submitted
 
-  const { user, game } = result;
+  const { game } = user;
 
-  // TODO Cache drawings somehow
-  game.drawings.push({
-    author: user.id,
-    data,
-    round: game.round,
-  });
+  if (game.view !== 'draw') return false;
 
-  game.waiting = game.waiting.filter((id) => id !== user.id);
+  game.drawings.push(
+    new Drawing({
+      author: user.id,
+      data,
+      round: game.round,
+      turn: game.turn,
+      game,
+      id: api.drawingId++,
+    })
+  );
+
+  game.waiting = game.waiting.filter((u) => u.id !== user.id);
 
   if (game.waiting.length === 0) {
     // We are ready to move on to the next phase
@@ -27,15 +33,8 @@ const submitDrawing = (api, ws, payload) => {
     game.waiting = [...game.users];
   }
 
-  game.users.forEach((u) => {
-    const su = api.getUser(u);
-    su.socket.send(
-      JSON.stringify({
-        type: 'game',
-        payload: game,
-      })
-    );
-  });
+  game.send();
+
   return game;
 };
 

@@ -94,6 +94,7 @@ class WebSocketHandler {
     this.lobbyId = 1;
     this.userId = 1;
     this.messageId = 1;
+    this.drawingId = 1;
     this.games = [];
     this.users = [];
 

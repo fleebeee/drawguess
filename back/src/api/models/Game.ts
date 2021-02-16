@@ -10,11 +10,21 @@ class Game {
   turn: number;
   round: number;
   view: string;
+  waiting: User[];
   drawings: Drawing[];
   chat: Chat;
 
   constructor({ leader, code }) {
     this.leader = leader;
+    this.users = [leader];
+    this.started = false;
+    this.turn = 1;
+    this.round = 1;
+    this.view = 'pregame';
+    this.chat = new Chat(this);
+    this.code = code;
+    this.waiting = [];
+    this.drawings = [];
   }
 
   forClient() {

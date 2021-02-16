@@ -1,3 +1,5 @@
+import WebSocket from 'ws';
+
 import Game from './Game';
 import Message from './Message';
 
@@ -33,11 +35,7 @@ class Chat {
   }
 
   broadcast() {
-    this.game.users.forEach((user) => {
-      if (user.socket.readyState === WebSocket.OPEN) {
-        user.socket.send(this.forClient());
-      }
-    });
+    this.game.send();
   }
 }
 

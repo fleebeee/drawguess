@@ -6,7 +6,7 @@ import Game from '../models/Game';
 const reconnect = (api, ws, payload) => {
   const { user } = payload;
 
-  const oldUser: User = _.find(api.users, (u) => u.id == parseInt(user.id, 10));
+  const oldUser = api.authenticate(ws, user);
 
   if (!oldUser) {
     // Just reset the old user and game
@@ -34,7 +34,7 @@ const reconnect = (api, ws, payload) => {
     ws.send(
       JSON.stringify({
         type: 'game',
-        payload: game,
+        payload: game.forClient(),
       })
     );
     return false;

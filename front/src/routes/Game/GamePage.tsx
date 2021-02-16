@@ -8,7 +8,7 @@ import PreGame from './views/PreGame';
 import Draw from './views/Draw';
 import Guess from './views/Guess';
 
-const GameView = ({ messages }) => {
+const GameView = () => {
   const [input, setInput] = useState('');
   const [name, setName] = useState('');
   const location = useLocation();
@@ -19,8 +19,8 @@ const GameView = ({ messages }) => {
       ws.send(
         JSON.stringify({
           type: 'client-message',
-          payload: { user, content, gameCode: game.code },
-        } as Message)
+          payload: { author: user, content, game: game },
+        })
       );
       setInput('');
     } catch (error) {
@@ -44,12 +44,12 @@ const GameView = ({ messages }) => {
       return;
     }
     const code = match[1];
-    ws.send(
-      JSON.stringify({
-        type: 'register-and-join',
-        payload: { name, code },
-      } as Message)
-    );
+    // ws.send(
+    //   JSON.stringify({
+    //     type: 'register-and-join',
+    //     payload: { name, code },
+    //   })
+    // );
   };
 
   const handleLeave = () => {
@@ -57,7 +57,7 @@ const GameView = ({ messages }) => {
       JSON.stringify({
         type: 'leave',
         payload: { user },
-      } as Message)
+      })
     );
   };
 
@@ -118,11 +118,12 @@ const GameView = ({ messages }) => {
       <GameComponent>{getGameView(game)}</GameComponent>
       <Chat>
         <Messages>
-          {messages.map((message: ChatMessageServer) => (
-            <Message key={message.id}>
-              {message.author}: {message.content}
-            </Message>
-          ))}
+          {game &&
+            game.chat.messages.map((message) => (
+              <Message key={message.id}>
+                {message.author}: {message.content}
+              </Message>
+            ))}
         </Messages>
         <TextField
           placeholder="Send a message..."
