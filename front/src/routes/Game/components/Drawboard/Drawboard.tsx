@@ -21,11 +21,9 @@ const drawBrush = (ctx, x, y, prevX, prevY) => {
 };
 
 const Drawboard = () => {
-  const [initialized, setInitialized] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [canvas, setCanvas] = useState<HTMLCanvasElement>();
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-  const [boundings, setBoundings] = useState<DOMRect>();
+  const [context, setContext] = useState<CanvasRenderingContext2D>();
   const [prevX, setPrevX] = useState(null);
   const [prevY, setPrevY] = useState(null);
   const [color, setColor] = useState('black');
@@ -36,18 +34,16 @@ const Drawboard = () => {
   prevXRef.current = prevX;
   const prevYRef = useRef();
   prevYRef.current = prevY;
-  const ctxRef = useRef<CanvasRenderingContext2D>();
-  ctxRef.current = ctx;
-  const bRef = useRef<DOMRect>();
-  bRef.current = boundings;
+  const contextRef = useRef<CanvasRenderingContext2D>();
+  contextRef.current = context;
+  const canvasRef = useRef<HTMLCanvasElement>();
+  canvasRef.current = canvas;
   const isDrawingRef = useRef<boolean>(false);
   isDrawingRef.current = isDrawing;
 
   const getXY = (event) => {
-    return [
-      event.clientX - bRef.current.left,
-      event.clientY - bRef.current.top,
-    ];
+    const bounds = canvasRef.current.getBoundingClientRect();
+    return [event.clientX - bounds.left, event.clientY - bounds.top];
   };
 
   useLayoutEffect(() => {
@@ -60,16 +56,14 @@ const Drawboard = () => {
     con.lineWidth = 20;
     con.strokeStyle = color;
     con.lineCap = 'round';
-    setCtx(con);
-
-    setBoundings(can.getBoundingClientRect());
+    setContext(con);
 
     const handleMouseDown = (event) => {
       const [x, y] = getXY(event);
       setIsDrawing(true);
 
       // Draw initial dot
-      drawBrush(ctxRef.current, x, y, prevX, prevY);
+      drawBrush(contextRef.current, x, y, prevX, prevY);
 
       setPrevX(x);
       setPrevY(y);
@@ -79,7 +73,7 @@ const Drawboard = () => {
       const [x, y] = getXY(event);
 
       if (isDrawingRef.current) {
-        drawBrush(ctxRef.current, x, y, prevXRef.current, prevYRef.current);
+        drawBrush(contextRef.current, x, y, prevXRef.current, prevYRef.current);
 
         setPrevX(x);
         setPrevY(y);
@@ -118,7 +112,7 @@ const Drawboard = () => {
   };
 
   useEffect(() => {
-    if (ctxRef.current) ctxRef.current.strokeStyle = color;
+    if (contextRef.current) contextRef.current.strokeStyle = color;
   }, [color]);
 
   return (

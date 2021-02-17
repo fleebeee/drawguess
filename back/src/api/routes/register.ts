@@ -12,7 +12,7 @@ const register = (api, ws, payload) => {
   ws.send(
     JSON.stringify({
       type: 'user',
-      payload: newUser,
+      payload: newUser.forClient(),
     })
   );
 

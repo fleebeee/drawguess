@@ -49,6 +49,11 @@ const submitDrawing = (api, ws, payload) => {
     // We are ready to move on to the next phase
     game.view = 'guess';
     game.waiting = [...game.users];
+    game.users.forEach((u) => {
+      const i = game.users.findIndex((j) => j.id === u.id);
+      u.task = { type: 'guess', drawing: i }; // TODO find drawing for user
+      u.send();
+    });
   }
 
   game.send();

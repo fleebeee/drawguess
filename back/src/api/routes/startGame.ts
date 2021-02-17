@@ -29,6 +29,9 @@ const startGame = (api, ws, payload) => {
 
   game.view = 'draw';
   game.waiting = [...game.users];
+  // Determine playing order
+  game.users = _.shuffle(game.users);
+
   game.send();
 
   return game;

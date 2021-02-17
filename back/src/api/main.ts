@@ -68,10 +68,13 @@ class WebSocketHandler {
       return false;
     }
 
-    const serverUser: User = _.find(
-      this.users,
-      (u) => u.id === user.id && u.secret === user.secret
+    const serverUser: User = this.users.find(
+      (u) =>
+        u.id === parseInt((user.id as unknown) as string, 10) &&
+        u.secret === user.secret
     );
+
+    console.debug('||DEBUG: [serverUser]', serverUser);
 
     if (!serverUser) {
       ws.send(

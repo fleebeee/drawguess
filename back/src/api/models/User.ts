@@ -10,6 +10,7 @@ class User {
   socket: import('ws'); // Just TypeScript things
   leader: boolean;
   game: Game;
+  task: object;
 
   constructor({ id, name, socket }) {
     this.id = id;
@@ -19,14 +20,15 @@ class User {
   }
 
   forClient() {
-    const { id, secret, name, iat, leader, game } = this;
+    const { id, secret, name, iat, leader, game, task } = this;
     return {
       id,
       secret,
       name,
       iat,
       leader,
-      game: game.forClient(),
+      game: game ? game.forClient() : null,
+      task,
     };
   }
 

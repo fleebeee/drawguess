@@ -54,14 +54,15 @@ class Game {
   }
 
   send() {
-    this.users.forEach((user) =>
+    this.users.forEach((user) => {
+      console.debug('||DEBUG: [user]', user);
       user.socket.send(
         JSON.stringify({
           type: 'game',
           payload: this.forClient(),
         })
-      )
-    );
+      );
+    });
   }
 }
 

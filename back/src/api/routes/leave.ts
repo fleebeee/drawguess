@@ -15,6 +15,10 @@ const leave = (api, ws, payload) => {
     serverUser.game = null;
   }
 
+  api.users = api.users.filter((u) => u.id !== serverUser.id);
+
+  console.debug('||DEBUG: [api.users]', api.users.length);
+
   ws.send(
     JSON.stringify({
       type: 'game',
@@ -22,7 +26,12 @@ const leave = (api, ws, payload) => {
     })
   );
 
-  serverUser.send();
+  ws.send(
+    JSON.stringify({
+      type: 'user',
+      payload: null,
+    })
+  );
 
   return true;
 };

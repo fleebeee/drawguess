@@ -24,7 +24,10 @@ const join = (api, ws, payload) => {
     return false;
   }
 
-  game.users.push(user.id);
+  game.users.push(serverUser);
+
+  serverUser.game = game;
+  serverUser.send();
 
   // Send new game data to everyone in the game
   game.send();
