@@ -11,3 +11,20 @@ export const generateRoomCode = () => {
   }
   return code.join('');
 };
+
+export const getPreviousUser = (user) => {
+  const { game } = user;
+
+  const currentIndex = game.users.findIndex((u) => u.id === user.id);
+  const previousIndex =
+    (currentIndex - 1 + game.users.length) % game.users.length;
+
+  const previousUser = game.users[previousIndex];
+
+  if (!previousUser) {
+    console.error(`Previous user wasn't found for ${user.name}!`);
+    return false;
+  }
+
+  return game.users[previousIndex];
+};

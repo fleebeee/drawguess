@@ -28,22 +28,19 @@ const App = () => {
       ws.onopen = (event) => {
         console.debug('WebSocket connected');
         const id = localStorage.getItem('id');
-        const name = localStorage.getItem('name');
         const secret = localStorage.getItem('secret');
-        const leader = localStorage.getItem('leader');
-        if (name && secret) {
+
+        if (id && secret) {
           console.debug('Using existing credentials');
           setUser({
             id: parseInt(id, 10),
-            name,
             secret,
-            leader: !!leader,
           });
 
           ws.send(
             JSON.stringify({
               type: 'reconnect',
-              payload: { user: { id, name, secret, leader } },
+              payload: { user: { id, secret } },
             } as Message)
           );
         }
@@ -70,12 +67,18 @@ const App = () => {
               localStorage.clear();
               break;
             }
-            const { id, name, secret, leader } = payload as User;
-            setUser({ id, name, secret, leader });
+            const {
+              id,
+              name,
+              secret,
+              leader,
+              task,
+              iat,
+              game,
+            } = payload as User;
+            setUser({ id, name, secret, leader, task, iat, game });
             localStorage.setItem('id', payload.id);
-            localStorage.setItem('name', payload.name);
             localStorage.setItem('secret', payload.secret);
-            localStorage.setItem('leader', payload.leader ? '1' : '0');
             setError(null);
             break;
           }

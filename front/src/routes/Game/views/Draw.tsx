@@ -8,10 +8,12 @@ import Drawboard from '../components/Drawboard/Drawboard';
 const Draw = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
+  let previousGuess = user && user.task.guess && user.task.guess.data;
+
   return (
     <GameBox>
       <PlayerList />
-      <div>Draw :)</div>
+      {previousGuess ? <div>Draw {previousGuess}</div> : <div>Draw :)</div>}
       <Drawboard />
     </GameBox>
   );

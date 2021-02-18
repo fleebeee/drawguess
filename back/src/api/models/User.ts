@@ -2,6 +2,8 @@ import { nanoid } from 'nanoid';
 
 import Game from './Game';
 
+import { getPreviousUser } from '../utils';
+
 class User {
   id: number;
   secret: string;
@@ -18,6 +20,50 @@ class User {
     this.socket = socket;
     this.secret = nanoid();
   }
+
+  getNewTask = () => {
+    const { game } = this;
+    const previousUser: User = getPreviousUser(this);
+
+    const round = game.round;
+    const turn = game.turn - 1;
+
+    if (game.view === 'guess') {
+      const drawing = game.drawings.find(
+        (d) => d.author === previousUser && d.round === round && d.turn === turn
+      );
+
+      if (!drawing) {
+        console.error(
+          `No drawing found with user ${previousUser.name} for round ${game.round} turn ${game.turn} in game ${game.code}`
+        );
+        return;
+      }
+
+      this.task = {
+        type: 'guess',
+        drawing: drawing.forClient(),
+      };
+    } else {
+      const guess = game.guesses.find(
+        (g) => g.author === previousUser && g.round === round && g.turn === turn
+      );
+
+      if (!guess) {
+        console.error(
+          `No guess found with user ${previousUser.name} for round ${game.round} turn ${game.turn} in game ${game.code}`
+        );
+        return;
+      }
+
+      this.task = {
+        type: 'draw',
+        guess: guess.forClient(),
+      };
+    }
+
+    this.send();
+  };
 
   forClient() {
     const { id, secret, name, iat, leader, game, task } = this;

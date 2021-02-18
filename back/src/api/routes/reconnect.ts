@@ -31,6 +31,7 @@ const reconnect = (api, ws, payload) => {
   const { game } = oldUser;
 
   if (game) {
+    oldUser.send();
     ws.send(
       JSON.stringify({
         type: 'game',

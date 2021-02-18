@@ -13,13 +13,15 @@ import startGame from './routes/startGame';
 import clientMessage from './routes/clientMessage';
 import leave from './routes/leave';
 import submitDrawing from './routes/submitDrawing';
+import submitGuess from './routes/submitGuess';
 
 class WebSocketHandler {
   MAX_MESSAGES: number;
   lobbyId: number;
   userId: number;
   messageId: number;
-  drawingId: number;
+  // drawingId: number;
+  guessId: number;
   games: Game[];
   users: User[];
 
@@ -74,8 +76,6 @@ class WebSocketHandler {
         u.secret === user.secret
     );
 
-    console.debug('||DEBUG: [serverUser]', serverUser);
-
     if (!serverUser) {
       ws.send(
         JSON.stringify({
@@ -97,7 +97,7 @@ class WebSocketHandler {
     this.lobbyId = 1;
     this.userId = 1;
     this.messageId = 1;
-    this.drawingId = 1;
+    this.guessId = 1;
     this.games = [];
     this.users = [];
 
@@ -147,6 +147,10 @@ class WebSocketHandler {
           }
           case 'submit-drawing': {
             submitDrawing(this, ws, payload);
+            break;
+          }
+          case 'submit-guess': {
+            submitGuess(this, ws, payload);
             break;
           }
           default: {

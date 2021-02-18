@@ -1,31 +1,29 @@
-import { nanoid } from 'nanoid';
-
 import User from './User';
 import Game from './Game';
 
-class Drawing {
-  id: string;
+class Guess {
+  id: number;
   author: User;
-  data: string; // dataURL
+  data: string;
   round: number;
   turn: number;
   game: Game;
 
-  constructor({ author, data, round, turn, game }) {
+  constructor({ author, data, round, turn, game, id }) {
     this.author = author;
     this.data = data;
     this.round = round;
     this.turn = turn;
     this.game = game;
-    this.id = nanoid();
+    this.id = id;
   }
 
   forClient() {
-    const { author, id, turn, round, game } = this;
+    const { author, data, turn, round, game } = this;
 
     return {
       author: author.name,
-      data: `http://localhost:5002/drawings/${id}.png`,
+      data,
       turn,
       round,
       game: game.code,
@@ -33,4 +31,4 @@ class Drawing {
   }
 }
 
-export default Drawing;
+export default Guess;

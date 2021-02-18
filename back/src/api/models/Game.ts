@@ -1,4 +1,5 @@
 import Drawing from './Drawing';
+import Guess from './Guess';
 import User from './User';
 import Chat from './Chat';
 
@@ -12,6 +13,7 @@ class Game {
   view: string;
   waiting: User[];
   drawings: Drawing[];
+  guesses: Guess[];
   chat: Chat;
 
   constructor({ leader, code }) {
@@ -25,6 +27,7 @@ class Game {
     this.code = code;
     this.waiting = [];
     this.drawings = [];
+    this.guesses = [];
   }
 
   forClient() {
@@ -37,6 +40,7 @@ class Game {
       round,
       view,
       drawings,
+      guesses,
       chat,
     } = this;
 
@@ -49,13 +53,13 @@ class Game {
       round,
       view,
       drawings: drawings.map((drawing) => drawing.id),
+      guesses: guesses.map((guess) => guess.id),
       chat: chat.forClient(),
     };
   }
 
   send() {
     this.users.forEach((user) => {
-      console.debug('||DEBUG: [user]', user);
       user.socket.send(
         JSON.stringify({
           type: 'game',
