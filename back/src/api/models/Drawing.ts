@@ -29,6 +29,7 @@ class Drawing {
       turn,
       round,
       game: game.code,
+      type: 'drawing',
     };
   }
 }

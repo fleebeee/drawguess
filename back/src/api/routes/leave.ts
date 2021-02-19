@@ -17,8 +17,6 @@ const leave = (api, ws, payload) => {
 
   api.users = api.users.filter((u) => u.id !== serverUser.id);
 
-  console.debug('||DEBUG: [api.users]', api.users.length);
-
   ws.send(
     JSON.stringify({
       type: 'game',

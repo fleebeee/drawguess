@@ -7,6 +7,7 @@ import CommonContext from '~utils/CommonContext';
 import PreGame from './views/PreGame';
 import Draw from './views/Draw';
 import Guess from './views/Guess';
+import PostRound from './views/PostRound';
 
 const GameView = () => {
   const [input, setInput] = useState('');
@@ -106,6 +107,9 @@ const GameView = () => {
       }
       case 'guess': {
         return <Guess />;
+      }
+      case 'post-round': {
+        return <PostRound />;
       }
       default:
         return null;

@@ -21,8 +21,6 @@ const clientMessage = (api, ws, payload) => {
     return false;
   }
 
-  console.debug('||DEBUG: [user]', user);
-
   // Find game
   const { game } = user;
   if (!game) {

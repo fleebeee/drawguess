@@ -27,6 +27,7 @@ class Guess {
       turn,
       round,
       game: game.code,
+      type: 'guess',
     };
   }
 }

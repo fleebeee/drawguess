@@ -15,6 +15,7 @@ class Game {
   drawings: Drawing[];
   guesses: Guess[];
   chat: Chat;
+  postRound: object;
 
   constructor({ leader, code }) {
     this.leader = leader;
@@ -28,6 +29,7 @@ class Game {
     this.waiting = [];
     this.drawings = [];
     this.guesses = [];
+    this.postRound = null;
   }
 
   forClient() {
@@ -42,6 +44,7 @@ class Game {
       drawings,
       guesses,
       chat,
+      postRound,
     } = this;
 
     return {
@@ -55,6 +58,7 @@ class Game {
       drawings: drawings.map((drawing) => drawing.id),
       guesses: guesses.map((guess) => guess.id),
       chat: chat.forClient(),
+      postRound,
     };
   }
 
