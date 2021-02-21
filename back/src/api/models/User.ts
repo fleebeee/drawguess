@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 
 import Game from './Game';
+import Prompt from './Prompt';
 
 import { getPreviousUser } from '../utils';
 
@@ -13,12 +14,15 @@ class User {
   leader: boolean;
   game: Game;
   task: object;
+  choices: string[];
+  prompt: Prompt;
 
   constructor({ id, name, socket }) {
     this.id = id;
     this.name = name;
     this.socket = socket;
     this.secret = nanoid();
+    this.choices = [];
   }
 
   getNewTask = () => {
@@ -66,7 +70,7 @@ class User {
   };
 
   forClient() {
-    const { id, secret, name, iat, leader, game, task } = this;
+    const { id, secret, name, iat, leader, game, task, choices, prompt } = this;
     return {
       id,
       secret,
@@ -75,6 +79,8 @@ class User {
       leader,
       game: game ? game.forClient() : null,
       task,
+      choices,
+      prompt: prompt && prompt.value,
     };
   }
 

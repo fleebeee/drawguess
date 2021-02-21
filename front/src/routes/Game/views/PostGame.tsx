@@ -1,27 +1,28 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 import CommonContext from '~utils/CommonContext';
 import PlayerList from '~components/PlayerList';
 
-import Drawboard from '../components/Drawboard/Drawboard';
-
-const Draw = () => {
+const PostGame = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
-  const previousGuess =
-    user && user.task && user.task.guess && user.task.guess.data;
-
-  const prompt = user && user.prompt;
+  const handleStart = () => {
+    ws.send(
+      JSON.stringify({
+        type: 'start-game',
+        payload: { user, game: game.code },
+      })
+    );
+  };
 
   return (
     <GameBox>
       <PlayerList />
-      {prompt || previousGuess ? (
-        <div>Draw {(prompt && `your prompt: ${prompt}`) || previousGuess}</div>
-      ) : (
-        <div>Draw :)</div>
+      <div>Scores: We're not keeping score</div>
+      {user && user.leader && (
+        <Start onClick={handleStart}>Start a new game!</Start>
       )}
-      <Drawboard />
     </GameBox>
   );
 };
@@ -35,4 +36,4 @@ const GameBox = styled.ul`
 
 const Start = styled.div``;
 
-export default Draw;
+export default PostGame;

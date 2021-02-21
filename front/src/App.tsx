@@ -67,16 +67,8 @@ const App = () => {
               localStorage.clear();
               break;
             }
-            const {
-              id,
-              name,
-              secret,
-              leader,
-              task,
-              iat,
-              game,
-            } = payload as User;
-            setUser({ id, name, secret, leader, task, iat, game });
+
+            setUser(payload);
             localStorage.setItem('id', payload.id);
             localStorage.setItem('secret', payload.secret);
             setError(null);

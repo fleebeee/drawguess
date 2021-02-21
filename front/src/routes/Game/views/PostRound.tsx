@@ -11,13 +11,11 @@ const PostRound = () => {
   const handleNext = () => {
     ws.send(
       JSON.stringify({
-        type: 'next-round',
+        type: game.round >= 2 ? 'conclude' : 'next-round',
         payload: { user },
       })
     );
   };
-
-  console.debug('||DEBUG: [game]', game);
 
   return (
     <GameBox>

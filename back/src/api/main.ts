@@ -10,10 +10,13 @@ import register from './routes/register';
 import join from './routes/join';
 import reconnect from './routes/reconnect';
 import startGame from './routes/startGame';
+import nextRound from './routes/nextRound';
 import clientMessage from './routes/clientMessage';
 import leave from './routes/leave';
 import submitDrawing from './routes/submitDrawing';
 import submitGuess from './routes/submitGuess';
+import submitPrompt from './routes/submitPrompt';
+import conclude from './routes/conclude';
 
 class WebSocketHandler {
   MAX_MESSAGES: number;
@@ -136,6 +139,14 @@ class WebSocketHandler {
             startGame(this, ws, payload);
             break;
           }
+          case 'next-round': {
+            nextRound(this, ws, payload);
+            break;
+          }
+          case 'conclude': {
+            conclude(this, ws, payload);
+            break;
+          }
           // User sent a message
           case 'client-message': {
             clientMessage(this, ws, payload);
@@ -151,6 +162,10 @@ class WebSocketHandler {
           }
           case 'submit-guess': {
             submitGuess(this, ws, payload);
+            break;
+          }
+          case 'submit-prompt': {
+            submitPrompt(this, ws, payload);
             break;
           }
           default: {

@@ -32,6 +32,12 @@ const submitDrawing = (api, ws, payload) => {
 
   game.drawings.push(drawing);
 
+  // Clean up prompt if it's the first submission
+  if (user.prompt) {
+    user.prompt = null;
+    user.send();
+  }
+
   // Save image on disk. Pray nothing goes wrong!
   const base64Data = data.replace(/^data:image\/png;base64,/, '');
   fs.writeFile(`./public/drawings/${drawing.id}.png`, base64Data, 'base64');

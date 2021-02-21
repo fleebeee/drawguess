@@ -40,60 +40,50 @@ const submitGuess = (api, ws, payload) => {
     // We are ready to move on to the next phase
 
     if (game.turn >= game.users.length) {
-      if (game.round >= 3) {
-        // Game ends
-        game.view = 'post-game';
-        game.send();
-        return;
-      } else {
-        // New round begins
-        // game.turn = 1;
-        // game.round++;
-        game.view = 'post-round';
+      // New round begins
+      game.view = 'post-round';
 
-        // Get drawings and guesses of this round
-        const drawings = game.drawings.filter((d) => d.round === game.round);
-        const guesses = game.guesses.filter((g) => g.round === game.round);
+      // Get drawings and guesses of this round
+      const drawings = game.drawings.filter((d) => d.round === game.round);
+      const guesses = game.guesses.filter((g) => g.round === game.round);
 
-        game.postRound = game.users.map((u, i) => {
-          // Construct sequence of draws and guesses
-          const result = [];
-          const n = game.users.length;
+      game.postRound = game.users.map((u, i) => {
+        // Construct sequence of draws and guesses
+        const result = [];
+        const n = game.users.length;
 
-          console.debug(`Post-round for user ${u.name}`);
-          for (let j = 0; j < n; j += 2) {
-            console.debug(
-              `Finding drawing by user ${
-                game.users[(i + j) % n].name
-              } on turn ${j + 1}`
-            );
-            const drawing = drawings.find(
-              (d) => d.author === game.users[(i + j) % n] && d.turn === j + 1
-            );
+        console.debug(`Post-round for user ${u.name}`);
+        for (let j = 0; j < n; j += 2) {
+          console.debug(
+            `Finding drawing by user ${game.users[(i + j) % n].name} on turn ${
+              j + 1
+            }`
+          );
+          const drawing = drawings.find(
+            (d) => d.author === game.users[(i + j) % n] && d.turn === j + 1
+          );
 
-            console.debug(
-              `Finding guess by user ${
-                game.users[(i + j + 1) % n].name
-              } on turn ${j + 2}`
-            );
-            const guess = guesses.find(
-              (g) =>
-                g.author === game.users[(i + j + 1) % n] && g.turn === j + 2
-            );
+          console.debug(
+            `Finding guess by user ${
+              game.users[(i + j + 1) % n].name
+            } on turn ${j + 2}`
+          );
+          const guess = guesses.find(
+            (g) => g.author === game.users[(i + j + 1) % n] && g.turn === j + 2
+          );
 
-            result.push(drawing.forClient());
-            result.push(guess.forClient());
-          }
+          result.push(drawing.forClient());
+          result.push(guess.forClient());
+        }
 
-          return {
-            name: u.name,
-            result,
-          };
-        });
+        return {
+          name: u.name,
+          result,
+        };
+      });
 
-        game.send();
-        return;
-      }
+      game.send();
+      return;
     }
 
     // Next turn

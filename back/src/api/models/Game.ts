@@ -1,7 +1,10 @@
+import _ from 'lodash';
+
 import Drawing from './Drawing';
 import Guess from './Guess';
 import User from './User';
 import Chat from './Chat';
+import Prompt from './Prompt';
 
 class Game {
   code: string;
@@ -16,6 +19,7 @@ class Game {
   guesses: Guess[];
   chat: Chat;
   postRound: object;
+  prompts: Prompt[];
 
   constructor({ leader, code }) {
     this.leader = leader;
@@ -30,7 +34,40 @@ class Game {
     this.drawings = [];
     this.guesses = [];
     this.postRound = null;
+    this.prompts = [];
   }
+
+  newPrompts = () => {
+    const wordsData = [
+      'dog',
+      'sixpack',
+      'chimney',
+      'satellite',
+      'car',
+      'beach',
+      'sun',
+      'sushi',
+      'television',
+      'snow',
+      'computer',
+      'pear',
+      'clown',
+      'road',
+      'beer',
+      'trampoline',
+      'ketchup',
+      'fork',
+      'bridge',
+      'windmill',
+    ];
+    const words = _.shuffle(wordsData);
+
+    // Give prompts to users
+    this.users.forEach((user) => {
+      user.choices = _.take(words, 3);
+      user.send();
+    });
+  };
 
   forClient() {
     const {

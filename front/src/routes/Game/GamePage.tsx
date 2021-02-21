@@ -8,6 +8,8 @@ import PreGame from './views/PreGame';
 import Draw from './views/Draw';
 import Guess from './views/Guess';
 import PostRound from './views/PostRound';
+import Choose from './views/Choose';
+import PostGame from './views/PostGame';
 
 const GameView = () => {
   const [input, setInput] = useState('');
@@ -110,6 +112,12 @@ const GameView = () => {
       }
       case 'post-round': {
         return <PostRound />;
+      }
+      case 'choose': {
+        return <Choose />;
+      }
+      case 'post-game': {
+        return <PostGame />;
       }
       default:
         return null;
