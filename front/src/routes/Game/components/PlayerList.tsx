@@ -8,18 +8,28 @@ const PlayerList = () => {
 
   return (
     <Container>
-      {game.users.map((user) => (
-        <div key={user}>{user}</div>
+      {game.users.map((u) => (
+        <Row key={u}>
+          <div>{u}</div>
+          <div>{user.leader ? 'Leader' : ''}</div>
+          <div>{user.leader ? 'Kick' : ''}</div>
+        </Row>
       ))}
     </Container>
   );
 };
 
 const Container = styled.ul`
-  background-color: var(--main-700);
+  background-color: var(--secondary-700);
+  max-width: 250px;
 
+  border-radius: 4px;
+  border: 1px solid var(--secondary-700);
+`;
+
+const Row = styled.li`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 75px 75px;
   grid-template-rows: 1fr;
 `;
 

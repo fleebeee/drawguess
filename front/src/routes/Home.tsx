@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 import CommonContext from '~utils/CommonContext';
 
+import Button from '~components/Button';
+
 const Home = () => {
   const { ws, user, game } = useContext(CommonContext);
   const [name, setName] = useState('');
@@ -15,7 +17,7 @@ const Home = () => {
       JSON.stringify({
         type: 'register',
         payload: { name },
-      } as Message)
+      })
     );
     setDeferredCreate(true);
   };
@@ -26,7 +28,7 @@ const Home = () => {
         JSON.stringify({
           type: 'create-game',
           payload: { user },
-        } as Message)
+        })
       );
       setDeferredCreate(false);
     }
@@ -37,7 +39,7 @@ const Home = () => {
       JSON.stringify({
         type: 'register',
         payload: { name },
-      } as Message)
+      })
     );
     setDeferredJoin(true);
   };
@@ -48,7 +50,7 @@ const Home = () => {
         JSON.stringify({
           type: 'join',
           payload: { user, code },
-        } as Message)
+        })
       );
       setDeferredJoin(false);
     }
@@ -75,7 +77,9 @@ const Home = () => {
         value={name}
         onChange={handleNameChange}
       ></Name>
-      <Create onClick={handleCreate}>Create a new game</Create>
+      <Button fontSize={24} onClick={handleCreate}>
+        Create a new game
+      </Button>
       <Or>OR</Or>
       <Join>Join an existing game</Join>
       <BottomRow>
@@ -93,7 +97,7 @@ const Home = () => {
             onChange={handleCodeChange}
           ></Code>
         </InputWrapper>
-        <Go onClick={handleGo}>Go</Go>
+        <Button onClick={handleGo}>Go</Button>
       </BottomRow>
     </Wrapper>
   );
@@ -106,15 +110,6 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.h1``;
-
-const Create = styled.div`
-  font-size: 24px;
-  color: var(--primary-300);
-  background-color: var(--secondary-300);
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-`;
 
 const Or = styled.h3``;
 
@@ -141,15 +136,6 @@ const Code = styled.input`
 
 const Name = styled(Code)`
   margin-bottom: 8px;
-`;
-
-const Go = styled.div`
-  cursor: pointer;
-  padding: 16px 24px;
-  border-radius: 4px;
-  color: var(--primary-300);
-  background-color: var(--secondary-300);
-  margin-left: 12px;
 `;
 
 export default Home;

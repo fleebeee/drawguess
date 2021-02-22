@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
+
 import CommonContext from '~utils/CommonContext';
-import PlayerList from '~components/PlayerList';
+
+import Button from '~components/Button';
 
 const PreGame = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
@@ -12,25 +14,23 @@ const PreGame = () => {
       JSON.stringify({
         type: 'start-game',
         payload: { user, game: game.code },
-      } as Message)
+      })
     );
   };
 
   return (
-    <GameBox>
-      <PlayerList />
-      {user && user.leader && <Start onClick={handleStart}>Start game!</Start>}
-    </GameBox>
+    <Wrapper>
+      {user && user.leader && (
+        <Button onClick={handleStart}>Start game!</Button>
+      )}
+    </Wrapper>
   );
 };
 
-const GameBox = styled.ul`
+const Wrapper = styled.div`
   display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  background-color: var(--main-700);
+  justify-content: center;
+  align-items: center;
 `;
-
-const Start = styled.div``;
 
 export default PreGame;

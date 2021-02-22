@@ -4,6 +4,8 @@ import _ from 'lodash';
 
 import CommonContext from '~utils/CommonContext';
 
+import Button from '~components/Button';
+
 const Choose = () => {
   // This should probably be validated
   const [custom, setCustom] = useState('');
@@ -40,7 +42,7 @@ const Choose = () => {
         value={custom}
         onChange={handleCustomChange}
       />
-      <a onClick={() => handleSubmit(custom)}>Submit</a>
+      <Button onClick={() => handleSubmit(custom)}>Submit</Button>
     </div>
   );
 };

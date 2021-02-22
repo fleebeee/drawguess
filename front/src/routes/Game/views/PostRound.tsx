@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
 import CommonContext from '~utils/CommonContext';
-import PlayerList from '~components/PlayerList';
 
 const PostRound = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
@@ -18,9 +17,7 @@ const PostRound = () => {
   };
 
   return (
-    <GameBox>
-      <PlayerList />
-
+    <div>
       {game.postRound.map((player) => (
         <div key={player.name}>
           <div>{player.name}'s prompt: X</div>
@@ -42,16 +39,9 @@ const PostRound = () => {
       {user && user.leader && (
         <Start onClick={handleNext}>Start next round!</Start>
       )}
-    </GameBox>
+    </div>
   );
 };
-
-const GameBox = styled.ul`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  background-color: var(--main-700);
-`;
 
 const Drawing = styled.img``;
 

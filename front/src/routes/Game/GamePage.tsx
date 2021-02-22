@@ -4,6 +4,7 @@ import { useLocation, Redirect } from 'react-router-dom';
 
 import CommonContext from '~utils/CommonContext';
 
+import GameContainer from './components/GameContainer';
 import PreGame from './views/PreGame';
 import Draw from './views/Draw';
 import Guess from './views/Guess';
@@ -127,7 +128,7 @@ const GameView = () => {
   return (
     <GameBox>
       <div onClick={handleLeave}>Leave</div>
-      <GameComponent>{getGameView(game)}</GameComponent>
+      <GameContainer>{getGameView(game)}</GameContainer>
       <Chat>
         <Messages>
           {game &&
@@ -194,7 +195,5 @@ const Go = styled.div`
 const Chat = styled.div`
   width: 100%;
 `;
-
-const GameComponent = styled.div``;
 
 export default GameView;
