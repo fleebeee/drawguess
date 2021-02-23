@@ -12,7 +12,8 @@ const Home = () => {
   const [deferredCreate, setDeferredCreate] = useState<boolean>(false);
   const [deferredJoin, setDeferredJoin] = useState<boolean>(false);
 
-  const handleCreate = async () => {
+  const handleCreate = async (e) => {
+    e.preventDefault();
     ws.send(
       JSON.stringify({
         type: 'register',
@@ -34,7 +35,8 @@ const Home = () => {
     }
   }, [user]);
 
-  const handleGo = () => {
+  const handleGo = (e) => {
+    e.preventDefault();
     ws.send(
       JSON.stringify({
         type: 'register',
@@ -71,18 +73,20 @@ const Home = () => {
   return (
     <Wrapper>
       <Header>Welcome to drawguess</Header>
-      <Name
-        type="text"
-        placeholder="Nickname"
-        value={name}
-        onChange={handleNameChange}
-      ></Name>
-      <Button fontSize={24} onClick={handleCreate}>
-        Create a new game
-      </Button>
+      <Create onSubmit={handleCreate}>
+        <Name
+          type="text"
+          placeholder="Nickname"
+          value={name}
+          onChange={handleNameChange}
+        ></Name>
+        <Button fontSize={24} type="submit">
+          Create a new game
+        </Button>
+      </Create>
       <Or>OR</Or>
       <Join>Join an existing game</Join>
-      <BottomRow>
+      <BottomRow onSubmit={handleGo}>
         <InputWrapper>
           <Name
             type="text"
@@ -97,13 +101,19 @@ const Home = () => {
             onChange={handleCodeChange}
           ></Code>
         </InputWrapper>
-        <Button onClick={handleGo}>Go</Button>
+        <Button type="submit">Go</Button>
       </BottomRow>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const Create = styled.form`
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -117,7 +127,7 @@ const Join = styled.h2`
   margin-top: 0;
 `;
 
-const BottomRow = styled.div`
+const BottomRow = styled.form`
   display: flex;
   align-items: center;
 `;
@@ -126,6 +136,7 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-right: 15px;
 `;
 
 const Code = styled.input`

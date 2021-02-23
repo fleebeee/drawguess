@@ -13,33 +13,9 @@ import Choose from './views/Choose';
 import PostGame from './views/PostGame';
 
 const GameView = () => {
-  const [input, setInput] = useState('');
   const [name, setName] = useState('');
   const location = useLocation();
   const { ws, game, user, error, loading } = useContext(CommonContext);
-
-  const sendMessage = (content) => {
-    try {
-      ws.send(
-        JSON.stringify({
-          type: 'client-message',
-          payload: { author: user, content, game: game },
-        })
-      );
-      setInput('');
-    } catch (error) {
-      console.debug(error);
-    }
-  };
-
-  const handleInputChange = (event) => {
-    const newInput = event.target.value;
-    if (newInput[newInput.length - 1] === '\n') {
-      sendMessage(newInput);
-    } else {
-      setInput(newInput);
-    }
-  };
 
   const handleGo = () => {
     const match = location.pathname.match(/^\/game\/([a-z]{4})$/);
@@ -48,21 +24,6 @@ const GameView = () => {
       return;
     }
     const code = match[1];
-    // ws.send(
-    //   JSON.stringify({
-    //     type: 'register-and-join',
-    //     payload: { name, code },
-    //   })
-    // );
-  };
-
-  const handleLeave = () => {
-    ws.send(
-      JSON.stringify({
-        type: 'leave',
-        payload: { user },
-      })
-    );
   };
 
   const handleNameChange = (event) => {
@@ -125,52 +86,8 @@ const GameView = () => {
     }
   };
 
-  return (
-    <GameBox>
-      <div onClick={handleLeave}>Leave</div>
-      <GameContainer>{getGameView(game)}</GameContainer>
-      <Chat>
-        <Messages>
-          {game &&
-            game.chat.messages.map((message) => (
-              <Message key={message.id}>
-                {message.author}: {message.content}
-              </Message>
-            ))}
-        </Messages>
-        <TextField
-          placeholder="Send a message..."
-          value={input}
-          onChange={handleInputChange}
-        />
-      </Chat>
-    </GameBox>
-  );
+  return <GameContainer>{getGameView(game)}</GameContainer>;
 };
-
-const GameBox = styled.ul`
-  background-color: var(--main-700);
-`;
-
-const Message = styled.li`
-  margin-bottom: 10px;
-`;
-
-const TextField = styled.textarea`
-  margin-top: 20px;
-  background-color: var(--main-900);
-  color: white;
-  border-radius: 4px;
-  border: 2px solid var(--secondary-700);
-  resize: none;
-  width: 100%;
-`;
-
-const Messages = styled.div`
-  width: 100%;
-  height: 150px;
-  overflow-y: scroll;
-`;
 
 const Register = styled.div`
   display: flex;
@@ -190,10 +107,6 @@ const Go = styled.div`
   color: var(--primary-300);
   background-color: var(--secondary-300);
   margin-left: 12px;
-`;
-
-const Chat = styled.div`
-  width: 100%;
 `;
 
 export default GameView;

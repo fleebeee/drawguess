@@ -29,8 +29,13 @@ const Container = styled.ul`
 
 const Row = styled.li`
   display: grid;
-  grid-template-columns: 1fr 75px 75px;
+  grid-template-columns: 1fr 50px 75px;
   grid-template-rows: 1fr;
+
+  & > div + div {
+    text-align: center;
+    margin-left: 5px;
+  }
 `;
 
 export default PlayerList;
