@@ -11,7 +11,7 @@ const PlayerList = () => {
       {game.users.map((u) => (
         <Row key={u}>
           <div>{u}</div>
-          <div>{user.leader ? 'Leader' : ''}</div>
+          <div>{u === game.leader ? 'Leader' : ''}</div>
           <div>{user.leader ? 'Kick' : ''}</div>
         </Row>
       ))}
@@ -25,6 +25,8 @@ const Container = styled.ul`
 
   border-radius: 4px;
   border: 1px solid var(--secondary-700);
+
+  margin-bottom: 20px;
 `;
 
 const Row = styled.li`

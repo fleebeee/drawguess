@@ -27,11 +27,11 @@ const Guess = () => {
   let drawingUrl = user && user.task.drawing && user.task.drawing.data;
 
   return (
-    <div>
+    <Wrapper>
       <What>What is this?</What>
       {drawingUrl && <Drawing src={drawingUrl} />}
 
-      <form onSubmit={handleSubmit}>
+      <ButtonWrapper onSubmit={handleSubmit}>
         <GuessField
           type="text"
           placeholder="Guess"
@@ -39,14 +39,30 @@ const Guess = () => {
           onChange={handleGuessChange}
         />
         <Button type="submit">Submit</Button>
-      </form>
-    </div>
+      </ButtonWrapper>
+    </Wrapper>
   );
 };
 
-const Drawing = styled.img``;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
-const GuessField = styled.input``;
+const ButtonWrapper = styled.form`
+  display: flex;
+  margin-top: 20px;
+`;
+
+const Drawing = styled.img`
+  align-self: center;
+`;
+
+const GuessField = styled.input`
+  margin-right: 10px;
+`;
 
 const What = styled.h2`
   margin-bottom: 10px;

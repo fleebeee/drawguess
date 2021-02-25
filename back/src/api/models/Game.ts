@@ -82,6 +82,7 @@ class Game {
       guesses,
       chat,
       postRound,
+      waiting,
     } = this;
 
     return {
@@ -96,6 +97,7 @@ class Game {
       guesses: guesses.map((guess) => guess.id),
       chat: chat.forClient(),
       postRound,
+      waiting: waiting.map((user) => user.name),
     };
   }
 

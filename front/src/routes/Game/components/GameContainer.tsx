@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import CommonContext from '~utils/CommonContext';
 
+import WaitingList from './WaitingList';
 import PlayerList from './PlayerList';
 import Chat from './Chat';
 
@@ -17,11 +18,13 @@ const GameContainer = ({ children }) => {
     );
   };
 
+  const waiting = game.waiting.length && !game.waiting.includes(user.name);
+
   return (
     <Container>
       <Leave onClick={handleLeave}>Leave</Leave>
       <PlayerList />
-      {children}
+      {waiting ? <WaitingList names={game.waiting} /> : children}
       <Chat />
     </Container>
   );

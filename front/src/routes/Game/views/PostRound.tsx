@@ -2,7 +2,55 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 
+import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
+
+const Drawing = ({ drawing }) => {
+  return (
+    <DrawingWrapper>
+      <DrawingLabel>
+        {drawing.turn}. {drawing.author} drew
+      </DrawingLabel>
+      <DrawingImage src={drawing.data} />
+    </DrawingWrapper>
+  );
+};
+
+const DrawingLabel = styled.div`
+  margin-bottom: 10px;
+`;
+
+const DrawingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const DrawingImage = styled.img``;
+
+const Guess = ({ guess }) => {
+  return (
+    <GuessWrapper>
+      <GuessLabel>
+        {guess.turn}. {guess.author} guessed
+      </GuessLabel>
+      <GuessText>{guess.data}</GuessText>
+    </GuessWrapper>
+  );
+};
+
+const GuessWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+`;
+
+const GuessLabel = styled.div``;
+
+const GuessText = styled.h2``;
 
 const PostRound = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
@@ -17,34 +65,62 @@ const PostRound = () => {
   };
 
   return (
-    <div>
+    <Wrapper>
       {game.postRound.map((player) => (
-        <div key={player.name}>
-          <div>{player.name}'s prompt: X</div>
-          {player.result.map((dg) => (
-            <div key={`${dg.author}-${dg.type}`}>
-              <div>
-                {dg.author}'s {dg.type}
-              </div>
-              {dg.type === 'drawing' ? (
-                <Drawing src={dg.data} />
-              ) : (
-                <div>{dg.data}</div>
-              )}
-            </div>
-          ))}
-        </div>
+        <DrawGuess key={player.name}>
+          <PromptWrapper>
+            <PromptLabel>{player.name}'s prompt:</PromptLabel>
+            <Prompt>{player.prompt}</Prompt>
+          </PromptWrapper>
+          {player.result.map((dg) =>
+            dg.type === 'drawing' ? (
+              <Drawing key={`${dg.author}-drawing`} drawing={dg} />
+            ) : (
+              <Guess key={`${dg.author}-guess`} guess={dg} />
+            )
+          )}
+        </DrawGuess>
       ))}
 
       {user && user.leader && (
-        <Start onClick={handleNext}>Start next round!</Start>
+        <ButtonWrapper>
+          <Button onClick={handleNext}>Start next round!</Button>
+        </ButtonWrapper>
       )}
-    </div>
+    </Wrapper>
   );
 };
 
-const Drawing = styled.img``;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+`;
 
-const Start = styled.div``;
+const DrawGuess = styled.div`
+  padding: 20px;
+  background-color: var(--secondary-500);
+  border-radius: 20px;
+`;
+
+const PromptWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+`;
+
+const PromptLabel = styled.div``;
+
+const Prompt = styled.h2`
+  margin-left: 10px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
 
 export default PostRound;

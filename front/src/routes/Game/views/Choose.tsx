@@ -34,7 +34,10 @@ const Choose = () => {
       <Choices>
         {choices &&
           choices.map((choice) => (
-            <Button key={choice} onClick={() => handleSubmit(choice)}>
+            <Button
+              key={choice}
+              onClick={(event) => handleSubmit(event, choice)}
+            >
               {choice}
             </Button>
           ))}

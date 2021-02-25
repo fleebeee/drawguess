@@ -78,6 +78,9 @@ const submitGuess = (api, ws, payload) => {
 
         return {
           name: u.name,
+          prompt: game.prompts.find(
+            (prompt) => prompt.round === game.round && prompt.author === u
+          ).value,
           result,
         };
       });
