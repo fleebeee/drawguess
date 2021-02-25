@@ -16,7 +16,8 @@ const Choose = () => {
     setCustom(event.target.value);
   };
 
-  const handleSubmit = (choice) => {
+  const handleSubmit = (event, choice) => {
+    event.preventDefault();
     ws.send(
       JSON.stringify({
         type: 'submit-prompt',
@@ -30,25 +31,41 @@ const Choose = () => {
   return (
     <div>
       <div>Choose your prompt</div>
-      {choices &&
-        choices.map((choice) => (
-          <Choice key={choice} onClick={() => handleSubmit(choice)}>
-            {choice}
-          </Choice>
-        ))}
-      <CustomField
-        type="text"
-        placeholder="Custom prompt"
-        value={custom}
-        onChange={handleCustomChange}
-      />
-      <Button onClick={() => handleSubmit(custom)}>Submit</Button>
+      <Choices>
+        {choices &&
+          choices.map((choice) => (
+            <Button key={choice} onClick={() => handleSubmit(choice)}>
+              {choice}
+            </Button>
+          ))}
+        <CustomWrapper onSubmit={(event) => handleSubmit(event, custom)}>
+          <CustomField
+            type="text"
+            placeholder="Custom prompt"
+            value={custom}
+            onChange={handleCustomChange}
+          />
+          <Button type="submit">Submit</Button>
+        </CustomWrapper>
+      </Choices>
     </div>
   );
 };
 
+const CustomWrapper = styled.form`
+  display: flex;
+
+  gap: 20px;
+`;
+
 const CustomField = styled.input``;
 
-const Choice = styled.div``;
+const Choices = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 50px;
+`;
 
 export default Choose;

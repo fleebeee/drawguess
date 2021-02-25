@@ -28,7 +28,7 @@ const GameContainer = ({ children }) => {
 };
 
 const Container = styled.div`
-  height: 400px;
+  min-height: 400px;
 `;
 
 const Leave = styled.div`

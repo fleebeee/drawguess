@@ -8,6 +8,7 @@ import React, {
 import styled from 'styled-components';
 import CommonContext from '~utils/CommonContext';
 
+import Button from '~components/Button';
 import Controls from './Controls';
 
 const width = 500;
@@ -119,7 +120,9 @@ const Drawboard = () => {
     <Wrapper>
       <Controls setColor={setColor} />
       <Canvas id="drawboard" width={width} height={height} />
-      <a onClick={handleSubmit}>Submit</a>
+      <ButtonWrapper>
+        <Button onClick={handleSubmit}>Submit</Button>
+      </ButtonWrapper>
     </Wrapper>
   );
 };
@@ -131,6 +134,13 @@ const Wrapper = styled.div`
 
 const Canvas = styled.canvas`
   // cursor: url(./myCursor.cur), none;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
 `;
 
 export default Drawboard;

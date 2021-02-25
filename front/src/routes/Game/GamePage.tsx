@@ -46,15 +46,11 @@ const GameView = () => {
   }
 
   if (error) {
-    return (
-      <GameBox>
-        <div>Game is offline</div>
-      </GameBox>
-    );
+    return <div>Game is offline</div>;
   }
 
   if (loading) {
-    return <GameBox>Loading</GameBox>;
+    return <div>Loading</div>;
   }
 
   if (!game) {

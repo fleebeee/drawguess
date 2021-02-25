@@ -41,13 +41,13 @@ const App = () => {
             JSON.stringify({
               type: 'reconnect',
               payload: { user: { id, secret } },
-            } as Message)
+            })
           );
         }
       };
 
       ws.onmessage = (event) => {
-        const m: Message = JSON.parse(event.data);
+        const m = JSON.parse(event.data);
         const { type, payload } = m;
 
         console.debug(`Received message\n${type}:`, payload);
@@ -155,7 +155,6 @@ const secondaryColor = 288;
 
 const GlobalStyle = createGlobalStyle`
   :root {
-    --sidebar-width: 200px;
     --main-100: hsl(${mainColor}, 36%, 90%);
     --main-200: hsl(${mainColor}, 36%, 80%);
     --main-300: hsl(${mainColor}, 36%, 70%);
@@ -189,13 +188,13 @@ const GlobalStyle = createGlobalStyle`
   }
 
   html {
-    width: 100%;
     background-color: var(--secondary-900);
     color: var(--white);
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
 
   body {
+    padding: 0;
     margin: 0;
   }
 
