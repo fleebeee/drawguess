@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
+
+import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
 
 const PostGame = () => {
@@ -17,14 +19,16 @@ const PostGame = () => {
 
   return (
     <div>
-      <div>Scores: We're not keeping score</div>
+      <Scores>Scores: We're not keeping score</Scores>
       {user && user.leader && (
-        <Start onClick={handleStart}>Start a new game!</Start>
+        <Button onClick={handleStart}>Start a new game!</Button>
       )}
     </div>
   );
 };
 
-const Start = styled.div``;
+const Scores = styled.div`
+  margin-bottom: 20px;
+`;
 
 export default PostGame;

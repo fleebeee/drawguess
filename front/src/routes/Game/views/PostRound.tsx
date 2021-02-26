@@ -33,7 +33,7 @@ const Guess = ({ guess }) => {
   return (
     <GuessWrapper>
       <GuessLabel>
-        {guess.turn}. {guess.author} guessed
+        {guess.turn}. {guess.author} guessed:
       </GuessLabel>
       <GuessText>{guess.data}</GuessText>
     </GuessWrapper>
@@ -50,7 +50,9 @@ const GuessWrapper = styled.div`
 
 const GuessLabel = styled.div``;
 
-const GuessText = styled.h2``;
+const GuessText = styled.h2`
+  margin-left: 10px;
+`;
 
 const PostRound = () => {
   const { ws, game, user, error, loading } = useContext(CommonContext);

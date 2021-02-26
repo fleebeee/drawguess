@@ -32,6 +32,7 @@ const WordWrapper = styled.div`
   display: flex;
   align-items: center;
   line-height: 1;
+  margin-bottom: 20px;
 `;
 
 const Word = styled.span`

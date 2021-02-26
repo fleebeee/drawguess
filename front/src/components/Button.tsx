@@ -2,7 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Button = ({ children, onClick, fontSize }) => (
-  <Container onClick={onClick} fontSize={fontSize}>
+  <Container
+    onClick={(event) => {
+      if (onClick) onClick(event);
+      return false;
+    }}
+    fontSize={fontSize}
+  >
     {children}
   </Container>
 );

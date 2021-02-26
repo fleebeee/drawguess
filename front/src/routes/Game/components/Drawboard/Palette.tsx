@@ -21,7 +21,7 @@ const palette = [
   'yellow',
 ];
 
-const Controls = ({ setColor }) => {
+const Palette = ({ setColor }) => {
   return (
     <Colors>
       {palette.map((color) => (
@@ -35,6 +35,7 @@ const Colors = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 500px;
 
   margin-bottom: 10px;
 `;
@@ -44,6 +45,7 @@ const Color = styled.div`
   width: ${colorSize}px;
   height: ${colorSize}px;
   background-color: ${(props) => props.color};
+  cursor: pointer;
 `;
 
-export default Controls;
+export default Palette;

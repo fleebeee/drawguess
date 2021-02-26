@@ -6,8 +6,11 @@ import loadable from '@loadable/component';
 import CommonContext from '~utils/CommonContext';
 
 // Lazy load routes
-const HomePage = loadable(() => import('./routes/Home'));
-const GamePage = loadable(() => import('./routes/Game/GamePage'));
+// const HomePage = loadable(() => import('./routes/Home'));
+// const GamePage = loadable(() => import('./routes/Game/GamePage'));
+
+import HomePage from './routes/Home';
+import GamePage from './routes/Game/GamePage';
 
 const App = () => {
   const [ws, setWs] = useState<WebSocket>(null);
@@ -20,6 +23,7 @@ const App = () => {
   messagesRef.current = messages;
 
   useEffect(() => {
+    console.log('Connecting to localhost:5002');
     setWs(new WebSocket(`ws://localhost:5002`));
   }, []);
 

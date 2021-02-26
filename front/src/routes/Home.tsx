@@ -73,14 +73,14 @@ const Home = () => {
   return (
     <Wrapper>
       <Header>Welcome to drawguess</Header>
-      <Create onSubmit={handleCreate}>
+      <Create>
         <Name
           type="text"
           placeholder="Nickname"
           value={name}
           onChange={handleNameChange}
         ></Name>
-        <Button fontSize={24} type="submit">
+        <Button fontSize={24} onClick={handleCreate}>
           Create a new game
         </Button>
       </Create>
@@ -101,7 +101,7 @@ const Home = () => {
             onChange={handleCodeChange}
           ></Code>
         </InputWrapper>
-        <Button type="submit">Go</Button>
+        <Button>Go</Button>
       </BottomRow>
     </Wrapper>
   );

@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import React from 'react';
 import compression from 'compression';
-import { StaticRouter } from 'react-router-dom/server';
+import { StaticRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 import { ChunkExtractor } from '@loadable/server';

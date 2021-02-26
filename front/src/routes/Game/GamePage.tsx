@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation, Redirect } from 'react-router-dom';
 
+import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
 
 import GameContainer from './components/GameContainer';
@@ -40,7 +41,7 @@ const GameView = () => {
           value={name}
           onChange={handleNameChange}
         ></Name>
-        <Go onClick={handleGo}>Go</Go>
+        <Button onClick={handleGo}>Go</Button>
       </Register>
     );
   }
@@ -94,15 +95,6 @@ const Name = styled.input`
   height: 32px;
   font-size: 16px;
   padding: 4px 4px 4px 12px;
-`;
-
-const Go = styled.div`
-  cursor: pointer;
-  padding: 16px 24px;
-  border-radius: 4px;
-  color: var(--primary-300);
-  background-color: var(--secondary-300);
-  margin-left: 12px;
 `;
 
 export default GameView;

@@ -9,7 +9,8 @@ import styled from 'styled-components';
 import CommonContext from '~utils/CommonContext';
 
 import Button from '~components/Button';
-import Controls from './Controls';
+import Palette from './Palette';
+import Brushes from './Brushes';
 
 const width = 500;
 const height = 500;
@@ -28,6 +29,7 @@ const Drawboard = () => {
   const [prevX, setPrevX] = useState(null);
   const [prevY, setPrevY] = useState(null);
   const [color, setColor] = useState('black');
+  const [brushSize, setBrushSize] = useState(20);
   const { ws, user, game, error, loading } = useContext(CommonContext);
 
   // Refs for listeners
@@ -54,7 +56,7 @@ const Drawboard = () => {
     setCanvas(can);
     con.fillStyle = '#FFFFFF';
     con.fillRect(0, 0, width, height);
-    con.lineWidth = 20;
+    con.lineWidth = brushSize;
     con.strokeStyle = color;
     con.lineCap = 'round';
     setContext(con);
@@ -116,10 +118,18 @@ const Drawboard = () => {
     if (contextRef.current) contextRef.current.strokeStyle = color;
   }, [color]);
 
+  useEffect(() => {
+    if (contextRef.current) contextRef.current.lineWidth = brushSize;
+  }, [brushSize]);
+
   return (
     <Wrapper>
-      <Controls setColor={setColor} />
-      <Canvas id="drawboard" width={width} height={height} />
+      <Palette setColor={setColor} />
+      <Splitter>
+        <Brushes setBrushSize={setBrushSize} />
+        <Canvas id="drawboard" width={width} height={height} />
+      </Splitter>
+
       <ButtonWrapper>
         <Button onClick={handleSubmit}>Submit</Button>
       </ButtonWrapper>
@@ -129,11 +139,14 @@ const Drawboard = () => {
 
 const Wrapper = styled.div`
   margin: 0 auto;
-  width: ${width}px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Canvas = styled.canvas`
   // cursor: url(./myCursor.cur), none;
+  cursor: crosshair;
 `;
 
 const ButtonWrapper = styled.div`
@@ -141,6 +154,11 @@ const ButtonWrapper = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 20px;
+`;
+
+const Splitter = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 export default Drawboard;
