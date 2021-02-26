@@ -107,10 +107,7 @@ class WebSocketHandler {
     const wss = new WebSocket.Server({ server });
     const wsLog = (text: string) => console.log(`WebSocket: ${text}`);
     wss.on('connection', (ws, req) => {
-      // Send game state for new connections
-      // ws.send(
-      //   JSON.stringify({ content: this.chat, type: 'array' } as Payload)
-      // );
+      // TODO Handle disconnections
 
       ws.on('message', (message: string) => {
         const m = JSON.parse(message);

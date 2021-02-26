@@ -38,7 +38,7 @@ class Game {
   }
 
   newPrompts = () => {
-    const wordsData = [
+    let words = [
       'dog',
       'sixpack',
       'chimney',
@@ -60,12 +60,19 @@ class Game {
       'bridge',
       'windmill',
     ];
-    const words = _.shuffle(wordsData);
+    words = _.shuffle(words);
 
     // Give prompts to users
-    this.users.forEach((user) => {
-      user.choices = _.take(words, 3);
+    this.users.forEach((user, i) => {
+      if (words.length < 3) {
+        console.error('We ran out of words');
+        // TODO send error
+        return false;
+      }
+
+      user.choices = words.slice(0, 3);
       user.send();
+      words = words.slice(3);
     });
   };
 
@@ -103,7 +110,7 @@ class Game {
 
   send() {
     this.users.forEach((user) => {
-      user.socket.send(
+      user.send(
         JSON.stringify({
           type: 'game',
           payload: this.forClient(),

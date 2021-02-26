@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import WebSocket from 'ws';
 
 import Game from './Game';
 import Prompt from './Prompt';
@@ -10,12 +11,12 @@ class User {
   secret: string;
   name: string;
   iat: Date;
-  socket: import('ws'); // Just TypeScript things
   leader: boolean;
   game: Game;
   task: object;
   choices: string[];
   prompt: Prompt;
+  private socket: import('ws'); // Just TypeScript things
 
   constructor({ id, name, socket }) {
     this.id = id;
@@ -84,12 +85,18 @@ class User {
     };
   }
 
-  send() {
+  send(message?) {
+    if (this.socket.readyState !== WebSocket.OPEN) {
+      console.error('Trying to send to user with inactive socket');
+      return false;
+    }
+
     this.socket.send(
-      JSON.stringify({
-        type: 'user',
-        payload: this.forClient(),
-      })
+      message ||
+        JSON.stringify({
+          type: 'user',
+          payload: this.forClient(),
+        })
     );
   }
 }
