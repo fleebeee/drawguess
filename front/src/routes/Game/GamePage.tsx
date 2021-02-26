@@ -15,17 +15,41 @@ import PostGame from './views/PostGame';
 
 const GameView = () => {
   const [name, setName] = useState('');
+  const [deferredJoin, setDeferredJoin] = useState<boolean>(false);
   const location = useLocation();
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
-  const handleGo = () => {
-    const match = location.pathname.match(/^\/game\/([a-z]{4})$/);
-    if (!match || match.length < 1) {
-      console.error(`Game code not found in URL ${location.pathname}`);
-      return;
-    }
-    const code = match[1];
+  const handleGo = (event) => {
+    event.preventDefault();
+
+    ws.send(
+      JSON.stringify({
+        type: 'register',
+        payload: { name },
+      })
+    );
+
+    setDeferredJoin(true);
   };
+
+  useEffect(() => {
+    if (deferredJoin && user) {
+      const match = location.pathname.match(/^\/game\/([a-z]{4})$/);
+      if (!match || match.length < 1) {
+        console.error(`Game code not found in URL ${location.pathname}`);
+        return;
+      }
+      const code = match[1];
+      
+      ws.send(
+        JSON.stringify({
+          type: 'join',
+          payload: { user, code },
+        })
+      );
+      setDeferredJoin(false);
+    }
+  });
 
   const handleNameChange = (event) => {
     setName(event.target.value);
