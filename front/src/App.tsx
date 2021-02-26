@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import loadable from '@loadable/component';
 
 import CommonContext from '~utils/CommonContext';
+import { host } from './config';
 
 // Lazy load routes
 // const HomePage = loadable(() => import('./routes/Home'));
@@ -23,8 +24,7 @@ const App = () => {
   messagesRef.current = messages;
 
   useEffect(() => {
-    console.log('Connecting to localhost:5002');
-    setWs(new WebSocket(`ws://localhost:5002`));
+    setWs(new WebSocket(`ws://${host}:5002`));
   }, []);
 
   useEffect(() => {

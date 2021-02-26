@@ -22,20 +22,12 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: {
-      // This stopped working
-      Images: path.resolve(__dirname, 'src/assets/images/'),
-    },
-  },
-
-  resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       '~utils': path.resolve(__dirname, 'src/utils'),
       '~components': path.resolve(__dirname, 'src/components'),
     },
   },
-
   optimization: {
     minimize: true,
   },
