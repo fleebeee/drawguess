@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
 import _ from 'lodash';
-import { nanoid } from 'nanoid';
 
 import User from './models/User';
 import Game from './models/Game';
@@ -33,7 +32,20 @@ class WebSocketHandler {
   };
 
   register = (socket: WebSocket, name: string) => {
-    const username = name;
+    const username = _.truncate(name);
+
+    if (username.length < 1) {
+      socket.send(
+        JSON.stringify({
+          type: 'error',
+          payload: {
+            type: 'USERNAME_TOO_SHORT',
+            string: 'Username is too short',
+          },
+        })
+      );
+      return null;
+    }
 
     if (_.find(this.users, (user: User) => user.name === username)) {
       socket.send(

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
+import _ from 'lodash';
+
 import CommonContext from '~utils/CommonContext';
 
 import Button from '~components/Button';
@@ -12,8 +14,12 @@ const Home = () => {
   const [deferredCreate, setDeferredCreate] = useState<boolean>(false);
   const [deferredJoin, setDeferredJoin] = useState<boolean>(false);
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
+  const validName = name.length > 1 && name.length < 40;
+  const validCode = code.length === 4;
+
+  const handleCreate = async (event) => {
+    event.preventDefault();
+    if (!validName) return;
     ws.send(
       JSON.stringify({
         type: 'register',
@@ -35,8 +41,9 @@ const Home = () => {
     }
   }, [user]);
 
-  const handleGo = (e) => {
-    e.preventDefault();
+  const handleGo = (event) => {
+    event.preventDefault();
+    if (!validName || !validCode) return;
     ws.send(
       JSON.stringify({
         type: 'register',
@@ -59,11 +66,11 @@ const Home = () => {
   });
 
   const handleNameChange = (event) => {
-    setName(event.target.value);
+    setName(_.truncate(event.target.value));
   };
 
   const handleCodeChange = (event) => {
-    setCode(event.target.value);
+    setCode(event.target.value.slice(0, 4));
   };
 
   if (game && game.code) {
@@ -73,14 +80,14 @@ const Home = () => {
   return (
     <Wrapper>
       <Header>Welcome to drawguess</Header>
-      <Create>
+      <Create onSubmit={handleCreate}>
         <Name
           type="text"
           placeholder="Nickname"
           value={name}
           onChange={handleNameChange}
         ></Name>
-        <Button fontSize={24} onClick={handleCreate}>
+        <Button disabled={!validName} onClick={handleCreate} fontSize={24}>
           Create a new game
         </Button>
       </Create>
@@ -101,7 +108,9 @@ const Home = () => {
             onChange={handleCodeChange}
           ></Code>
         </InputWrapper>
-        <Button>Go</Button>
+        <Button disabled={!validName || !validCode} onClick={handleGo}>
+          Go
+        </Button>
       </BottomRow>
     </Wrapper>
   );
