@@ -25,7 +25,7 @@ class Drawing {
 
     return {
       author: author.name,
-      data: `http://localhost:5002/drawings/${id}.png`,
+      data: `http://${process.env.HOST || 'localhost'}:5002/drawings/${id}.png`,
       turn,
       round,
       game: game.code,
