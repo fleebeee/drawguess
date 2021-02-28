@@ -5,6 +5,14 @@ import CommonContext from '~utils/CommonContext';
 const Chat = () => {
   const [input, setInput] = useState('');
   const { ws, game, user, error, loading } = useContext(CommonContext);
+  const messageContainerRef: React.RefObject<HTMLDivElement> = React.createRef();
+
+  const messages = game && game.chat.messages;
+
+  useEffect(() => {
+    const elem = messageContainerRef.current;
+    elem.scrollTop = elem.scrollHeight - elem.clientHeight;
+  }, [messages]);
 
   const sendMessage = (content) => {
     try {
@@ -31,7 +39,7 @@ const Chat = () => {
 
   return (
     <Wrapper>
-      <Messages>
+      <Messages ref={messageContainerRef}>
         {game &&
           game.chat.messages.map((message) => (
             <Message key={message.id}>
