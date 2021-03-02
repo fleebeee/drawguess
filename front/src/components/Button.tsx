@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({ children, disabled, onClick, fontSize }) => (
+interface Props {
+  children: React.ReactNode;
+  disabled?: boolean;
+  onClick?: Function;
+  fontSize?: number;
+}
+
+const Button = ({ children, disabled, onClick, fontSize }: Props) => (
   <Container
     onClick={(event) => {
       event.preventDefault();
@@ -16,7 +23,11 @@ const Button = ({ children, disabled, onClick, fontSize }) => (
   </Container>
 );
 
-const Container = styled.button`
+interface ContainerProps {
+  readonly fontSize?: number;
+}
+
+const Container = styled.button<ContainerProps>`
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   padding: 16px 24px;
   border-radius: 4px;

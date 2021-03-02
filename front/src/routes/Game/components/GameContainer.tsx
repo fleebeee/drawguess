@@ -35,6 +35,7 @@ const Container = styled.div`
 `;
 
 const Leave = styled.div`
+  cursor: pointer;
   color: var(--secondary-200);
   margin-bottom: 10px;
   font-size: 14px;

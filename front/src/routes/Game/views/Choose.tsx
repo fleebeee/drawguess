@@ -48,7 +48,9 @@ const Choose = () => {
             value={custom}
             onChange={handleCustomChange}
           />
-          <Button>Submit</Button>
+          <Button onClick={(event) => handleSubmit(event, custom)}>
+            Submit
+          </Button>
         </CustomWrapper>
       </Choices>
     </div>

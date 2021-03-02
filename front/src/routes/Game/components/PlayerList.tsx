@@ -8,11 +8,11 @@ const PlayerList = () => {
 
   return (
     <Container>
-      {game.users.map((u) => (
+      {game.users.map((u: string) => (
         <Row key={u}>
           <div>{u}</div>
           <div>{u === game.leader ? 'Leader' : ''}</div>
-          <div>{user.leader ? 'Kick' : ''}</div>
+          {/* <div>{user.leader ? 'Kick' : ''}</div> */}
         </Row>
       ))}
     </Container>
@@ -31,7 +31,7 @@ const Container = styled.ul`
 
 const Row = styled.li`
   display: grid;
-  grid-template-columns: 1fr 50px 75px;
+  grid-template-columns: 1fr 100px;
   grid-template-rows: 1fr;
 
   & > div + div {

@@ -38,7 +38,7 @@ const Guess = () => {
           value={guess}
           onChange={handleGuessChange}
         />
-        <Button>Submit</Button>
+        <Button onClick={handleSubmit}>Submit</Button>
       </ButtonWrapper>
     </Wrapper>
   );
