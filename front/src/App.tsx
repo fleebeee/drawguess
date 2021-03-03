@@ -28,7 +28,8 @@ const App = () => {
         <GlobalStyles />
         <CommonContext.Provider value={commonProps}>
           <Content>
-            {error && error.string}
+            <Error>{error && error.string}</Error>
+            
             <Switch>
               <Route exact path="/">
                 <HomePage />
@@ -45,8 +46,12 @@ const App = () => {
 };
 
 const Content = styled.div`
-  background-color: var(--main-700);
+  // background-color: var(--main-700);
   padding: 40px;
+`;
+
+const Error = styled.div`
+  height: 20px;
 `;
 
 export default App;

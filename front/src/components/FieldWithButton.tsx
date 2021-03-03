@@ -7,12 +7,8 @@ interface Props {
   label?: string;
   placeholder?: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (
-    event:
-      | React.FormEvent<HTMLFormElement>
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
+  onChange: React.Dispatch<React.SetStateAction<string>>;
+  handleSubmit: (value: string) => void;
 }
 
 const FieldWithButton = ({
@@ -21,17 +17,29 @@ const FieldWithButton = ({
   value,
   onChange,
   handleSubmit,
-}: Props) => (
-  <Wrapper onSubmit={handleSubmit}>
+}: Props) => {
+
+  const handleChange = (event) => {
+    event.preventDefault();
+    onChange(event.target.value);
+  }
+
+  const handleClick = (event) => {
+    event.preventDefault();
+    handleSubmit(value);
+  }
+
+  return (
+  <Wrapper onSubmit={handleClick}>
     <InputField
       type="text"
       placeholder={placeholder}
       value={value}
-      onChange={onChange}
+      onChange={handleChange}
     />
-    <Button onClick={handleSubmit}>{label || 'Submit'}</Button>
+    <Button onClick={handleClick}>{label || 'Submit'}</Button>
   </Wrapper>
-);
+);}
 
 const Wrapper = styled.form`
   display: flex;

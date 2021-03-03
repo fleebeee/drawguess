@@ -5,6 +5,7 @@ import _ from 'lodash';
 import CommonContext from '~utils/CommonContext';
 
 import Button from '~components/Button';
+import FieldWithButton from '~components/FieldWithButton';
 
 const Choose = () => {
   // This should probably be validated
@@ -12,12 +13,7 @@ const Choose = () => {
 
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
-  const handleCustomChange = (event) => {
-    setCustom(event.target.value);
-  };
-
-  const handleSubmit = (event, choice) => {
-    event.preventDefault();
+  const handleSubmit = (choice: string) => {
     ws.send(
       JSON.stringify({
         type: 'submit-prompt',
@@ -29,46 +25,33 @@ const Choose = () => {
   const choices = user && user.choices;
 
   return (
-    <div>
-      <div>Choose your prompt</div>
+    <Wrapper>
+      <h2>Choose your prompt</h2>
       <Choices>
         {choices &&
           choices.map((choice) => (
             <Button
               key={choice}
-              onClick={(event) => handleSubmit(event, choice)}
+              onClick={() => handleSubmit(choice)}
             >
               {choice}
             </Button>
           ))}
-        <CustomWrapper onSubmit={(event) => handleSubmit(event, custom)}>
-          <CustomField
-            type="text"
-            placeholder="Custom prompt"
-            value={custom}
-            onChange={handleCustomChange}
-          />
-          <Button onClick={(event) => handleSubmit(event, custom)}>
-            Submit
-          </Button>
-        </CustomWrapper>
+      <FieldWithButton label="Submit" placeholder="Your own prompt..." value={custom} onChange={setCustom} handleSubmit={handleSubmit} />
       </Choices>
-    </div>
+    </Wrapper>
   );
 };
 
-const CustomWrapper = styled.form`
-  display: flex;
-
-  gap: 20px;
+const Wrapper = styled.div`
+  text-align: center;
 `;
-
-const CustomField = styled.input``;
 
 const Choices = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 50px;
 
   gap: 50px;
 `;

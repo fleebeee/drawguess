@@ -16,9 +16,9 @@ const Draw = () => {
     <div>
       <WordWrapper>
         {prompt || previousGuess ? (
-          <span>Draw {prompt && `your prompt`}</span>
+          <Objective>Draw {prompt && `your prompt`}</Objective>
         ) : (
-          <span>Draw something</span>
+          <Objective>Draw something</Objective>
         )}
         <Word>{prompt || previousGuess}</Word>
       </WordWrapper>
@@ -31,13 +31,19 @@ const WordWrapper = styled.div`
   margin-top: 20px;
   display: flex;
   align-items: center;
-  line-height: 1;
-  margin-bottom: 20px;
+  // line-height: 1;
+  margin-bottom: 15px;
+`;
+
+const Objective = styled.span`
+  font-size: 18px;
 `;
 
 const Word = styled.span`
-  font-size: 28px;
+  font-size: 36px;
+  font-weight: 600;
   margin-left: 15px;
+  margin-bottom: 5px;
   color: var(--secondary-300);
 `;
 

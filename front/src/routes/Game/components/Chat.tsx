@@ -58,7 +58,7 @@ const Chat = () => {
 
 const Wrapper = styled.div`
   width: 100%;
-  margin-top: 20px;
+  margin-top: 50px;
 `;
 
 const Message = styled.li`
@@ -70,7 +70,7 @@ const TextField = styled.textarea`
   background-color: var(--main-900);
   color: white;
   border-radius: 4px;
-  border: 2px solid var(--secondary-700);
+  border: 2px solid var(--main-500);
   resize: none;
   width: 100%;
   box-sizing: border-box;

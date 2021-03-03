@@ -33,8 +33,9 @@ const Container = styled.button<ContainerProps>`
   border-radius: 4px;
   color: var(--primary-300);
   background-color: ${(props) =>
-    props.disabled ? 'var(--secondary-300)' : 'var(--secondary-500)'};
+    props.disabled ? 'var(--grey-300)' : 'var(--secondary-400)'};
   font-size: ${(props) => props.fontSize || 16}px;
+  transition: all 0.2s ease-out;
 `;
 
 export default Button;

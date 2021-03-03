@@ -20,23 +20,39 @@ const PlayerList = () => {
 };
 
 const Container = styled.ul`
-  background-color: var(--secondary-700);
+  position: absolute;
+  right: -20px;
+  top: 0;
+  transform:translateX(100%);
   max-width: 250px;
-
-  border-radius: 4px;
-  border: 1px solid var(--secondary-700);
-
   margin-bottom: 20px;
+  align-self: flex-end;
 `;
 
 const Row = styled.li`
   display: grid;
   grid-template-columns: 1fr 100px;
   grid-template-rows: 1fr;
+  padding: 4px;
+  background: var(--secondary-700);
 
   & > div + div {
     text-align: center;
     margin-left: 5px;
+  }
+
+  &:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  &:nth-child(odd) {
+    background: var(--secondary-800);
   }
 `;
 

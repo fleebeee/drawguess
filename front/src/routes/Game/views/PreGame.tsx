@@ -20,6 +20,7 @@ const PreGame = () => {
 
   return (
     <Wrapper>
+      <Text>Waiting for players...</Text>
       {user && user.leader && (
         <Button onClick={handleStart}>Start game!</Button>
       )}
@@ -31,7 +32,13 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   height: 100%;
+`;
+
+const Text = styled.h2`
+  margin-top: 80px;
+  margin-bottom: 80px;
 `;
 
 export default PreGame;

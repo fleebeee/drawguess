@@ -2,9 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 import CommonContext from '~utils/CommonContext';
 
+import Card from '~components/Card';
 import Button from '~components/Button';
 
 const Home = () => {
@@ -79,7 +81,8 @@ const Home = () => {
 
   return (
     <Wrapper>
-      <Header>Welcome to drawguess</Header>
+      <Card>
+      <h1>drawguess</h1>
       <Create onSubmit={handleCreate}>
         <Name
           type="text"
@@ -111,14 +114,17 @@ const Home = () => {
         <Button disabled={!validName || !validCode} onClick={handleGo}>
           Go
         </Button>
+        
       </BottomRow>
+     
+      </Card>
+      <Credits><Credit href="https://github.com/Flibo/drawguess" target="_blank" rel="noopener noreferrer">GitHub <FaExternalLinkAlt /></Credit></Credits>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: center;
   flex-direction: column;
 `;
 
@@ -127,8 +133,6 @@ const Create = styled.form`
   align-items: center;
   flex-direction: column;
 `;
-
-const Header = styled.h1``;
 
 const Or = styled.h3``;
 
@@ -156,6 +160,16 @@ const Code = styled.input`
 
 const Name = styled(Code)`
   margin-bottom: 8px;
+`;
+
+const Credits = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const Credit = styled.a`
+  text-shadow: 2px 2px 3px var(--main-900);
 `;
 
 export default Home;
