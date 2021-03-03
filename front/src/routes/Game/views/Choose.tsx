@@ -30,14 +30,17 @@ const Choose = () => {
       <Choices>
         {choices &&
           choices.map((choice) => (
-            <Button
-              key={choice}
-              onClick={() => handleSubmit(choice)}
-            >
+            <Button key={choice} onClick={() => handleSubmit(choice)}>
               {choice}
             </Button>
           ))}
-      <FieldWithButton label="Submit" placeholder="Your own prompt..." value={custom} onChange={setCustom} handleSubmit={handleSubmit} />
+        <FieldWithButton
+          label="Submit"
+          placeholder="Your own prompt..."
+          value={custom}
+          onChange={setCustom}
+          onSubmit={handleSubmit}
+        />
       </Choices>
     </Wrapper>
   );

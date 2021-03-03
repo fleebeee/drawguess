@@ -8,7 +8,7 @@ interface Props {
   placeholder?: string;
   value: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: (value: string) => void;
+  onSubmit: (value?: string) => void;
 }
 
 const FieldWithButton = ({
@@ -16,30 +16,34 @@ const FieldWithButton = ({
   placeholder,
   value,
   onChange,
-  handleSubmit,
+  onSubmit,
 }: Props) => {
-
   const handleChange = (event) => {
     event.preventDefault();
     onChange(event.target.value);
-  }
+  };
 
-  const handleClick = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    handleSubmit(value);
-  }
+    if (value.length > 0 && value.length < 256) {
+      onSubmit();
+    } else {
+      console.error('Invalid field value', value);
+    }
+  };
 
   return (
-  <Wrapper onSubmit={handleClick}>
-    <InputField
-      type="text"
-      placeholder={placeholder}
-      value={value}
-      onChange={handleChange}
-    />
-    <Button onClick={handleClick}>{label || 'Submit'}</Button>
-  </Wrapper>
-);}
+    <Wrapper onSubmit={handleSubmit}>
+      <InputField
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={handleChange}
+      />
+      <Button onClick={handleSubmit}>{label || 'Submit'}</Button>
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.form`
   display: flex;

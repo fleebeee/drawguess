@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useLocation, Redirect } from 'react-router-dom';
 
 import Button from '~components/Button';
+import FieldWithButton from '~components/FieldWithButton';
 import CommonContext from '~utils/CommonContext';
 
 import GameContainer from './components/GameContainer';
@@ -19,9 +20,7 @@ const GameView = () => {
   const location = useLocation();
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
-  const handleGo = (event) => {
-    event.preventDefault();
-
+  const handleGo = () => {
     ws.send(
       JSON.stringify({
         type: 'register',
@@ -40,7 +39,7 @@ const GameView = () => {
         return;
       }
       const code = match[1];
-      
+
       ws.send(
         JSON.stringify({
           type: 'join',
@@ -51,21 +50,16 @@ const GameView = () => {
     }
   });
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
   if (!user) {
-    // return <Redirect to="/" />;
     return (
       <Register>
-        <Name
-          type="text"
+        <FieldWithButton
+          label="Go"
           placeholder="Nickname"
           value={name}
-          onChange={handleNameChange}
-        ></Name>
-        <Button onClick={handleGo}>Go</Button>
+          onChange={setName}
+          onSubmit={handleGo}
+        />
       </Register>
     );
   }

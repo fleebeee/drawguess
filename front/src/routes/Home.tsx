@@ -81,44 +81,50 @@ const Home = () => {
 
   return (
     <Wrapper>
-      <Card>
-      <h1>drawguess</h1>
-      <Create onSubmit={handleCreate}>
-        <Name
-          type="text"
-          placeholder="Nickname"
-          value={name}
-          onChange={handleNameChange}
-        ></Name>
-        <Button disabled={!validName} onClick={handleCreate} fontSize={24}>
-          Create a new game
-        </Button>
-      </Create>
-      <Or>OR</Or>
-      <Join>Join an existing game</Join>
-      <BottomRow onSubmit={handleGo}>
-        <InputWrapper>
+      <HomeCard>
+        <h1>drawguess</h1>
+        <Create onSubmit={handleCreate}>
           <Name
             type="text"
             placeholder="Nickname"
             value={name}
             onChange={handleNameChange}
           ></Name>
-          <Code
-            type="text"
-            placeholder="Game code"
-            value={code}
-            onChange={handleCodeChange}
-          ></Code>
-        </InputWrapper>
-        <Button disabled={!validName || !validCode} onClick={handleGo}>
-          Go
-        </Button>
-        
-      </BottomRow>
-     
-      </Card>
-      <Credits><Credit href="https://github.com/Flibo/drawguess" target="_blank" rel="noopener noreferrer">GitHub <FaExternalLinkAlt /></Credit></Credits>
+          <Button disabled={!validName} onClick={handleCreate} fontSize={24}>
+            Create a new game
+          </Button>
+        </Create>
+        <Or>OR</Or>
+        <Join>Join an existing game</Join>
+        <BottomRow onSubmit={handleGo}>
+          <InputWrapper>
+            <Name
+              type="text"
+              placeholder="Nickname"
+              value={name}
+              onChange={handleNameChange}
+            ></Name>
+            <Code
+              type="text"
+              placeholder="Game code"
+              value={code}
+              onChange={handleCodeChange}
+            ></Code>
+          </InputWrapper>
+          <Button disabled={!validName || !validCode} onClick={handleGo}>
+            Go
+          </Button>
+        </BottomRow>
+      </HomeCard>
+      <Credits>
+        <Credit
+          href="https://github.com/Flibo/drawguess"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub <FaExternalLinkAlt />
+        </Credit>
+      </Credits>
     </Wrapper>
   );
 };
@@ -170,6 +176,10 @@ const Credits = styled.div`
 
 const Credit = styled.a`
   text-shadow: 2px 2px 3px var(--main-900);
+`;
+
+const HomeCard = styled(Card)`
+  padding: 40px 80px 60px 80px;
 `;
 
 export default Home;

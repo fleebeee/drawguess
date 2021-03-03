@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
 
 import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
@@ -33,7 +32,7 @@ const Guess = ({ guess }) => {
   return (
     <GuessWrapper>
       <GuessLabel>
-        {guess.turn}. {guess.author} guessed:
+        {guess.turn}. {guess.author} believed this was:
       </GuessLabel>
       <GuessText>{guess.data}</GuessText>
     </GuessWrapper>
@@ -52,6 +51,7 @@ const GuessLabel = styled.div``;
 
 const GuessText = styled.h2`
   margin-left: 10px;
+  padding-bottom: 3px;
 `;
 
 const PostRound = () => {
@@ -84,10 +84,12 @@ const PostRound = () => {
         </DrawGuess>
       ))}
 
-      {user && user.leader && (
+      {user && user.leader ? (
         <ButtonWrapper>
           <Button onClick={handleNext}>Start next round!</Button>
         </ButtonWrapper>
+      ) : (
+        <Waiting>Waiting for leader to proceed...</Waiting>
       )}
     </Wrapper>
   );
@@ -102,8 +104,8 @@ const Wrapper = styled.div`
 
 const DrawGuess = styled.div`
   padding: 20px;
-  background-color: var(--secondary-500);
-  border-radius: 20px;
+  background-color: var(--secondary-600);
+  border-radius: 10px;
 `;
 
 const PromptWrapper = styled.div`
@@ -117,12 +119,17 @@ const PromptLabel = styled.div``;
 
 const Prompt = styled.h2`
   margin-left: 10px;
+  padding-bottom: 3px;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
+`;
+
+const Waiting = styled.h2`
+  text-align: center;
 `;
 
 export default PostRound;

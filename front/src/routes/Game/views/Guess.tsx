@@ -4,18 +4,14 @@ import _ from 'lodash';
 
 import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
+import FieldWithButton from '~components/FieldWithButton';
 
 const Guess = () => {
   const [guess, setGuess] = useState('');
 
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
-  const handleGuessChange = (event) => {
-    setGuess(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     ws.send(
       JSON.stringify({
         type: 'submit-guess',
@@ -31,15 +27,13 @@ const Guess = () => {
       <What>What is this?</What>
       {drawingUrl && <Drawing src={drawingUrl} />}
 
-      <ButtonWrapper onSubmit={handleSubmit}>
-        <GuessField
-          type="text"
-          placeholder="Guess"
-          value={guess}
-          onChange={handleGuessChange}
-        />
-        <Button onClick={handleSubmit}>Submit</Button>
-      </ButtonWrapper>
+      <FieldWithButton
+        label="Submit"
+        placeholder="Your guess..."
+        value={guess}
+        onChange={setGuess}
+        onSubmit={handleSubmit}
+      />
     </Wrapper>
   );
 };
@@ -51,17 +45,9 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const ButtonWrapper = styled.form`
-  display: flex;
-  margin-top: 20px;
-`;
-
 const Drawing = styled.img`
   align-self: center;
-`;
-
-const GuessField = styled.input`
-  margin-right: 10px;
+  margin-bottom: 20px;
 `;
 
 const What = styled.h2`
