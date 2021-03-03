@@ -4,7 +4,7 @@ import styled from 'styled-components';
 interface Props {
   children: React.ReactNode;
   disabled?: boolean;
-  onClick?: Function;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   fontSize?: number;
 }
 
