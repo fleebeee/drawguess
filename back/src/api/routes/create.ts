@@ -19,6 +19,7 @@ const create = (api, ws, payload) => {
   const game = new Game({
     leader: user,
     code,
+    wordlist: api.wordlist,
   });
 
   api.games.push(game);

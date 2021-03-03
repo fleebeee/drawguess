@@ -24,6 +24,19 @@ const join = (api, ws, payload) => {
     return false;
   }
 
+  if (_.find(game.users, (user: User) => user.name === serverUser.name)) {
+    serverUser.send(
+      JSON.stringify({
+        type: 'error',
+        payload: {
+          type: 'USERNAME_NOT_AVAILABLE',
+          string: 'Username is already in use in that game',
+        },
+      })
+    );
+    return null;
+  }
+
   game.users.push(serverUser);
 
   serverUser.game = game;

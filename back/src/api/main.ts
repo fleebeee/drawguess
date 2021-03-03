@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 import _ from 'lodash';
+import fs from 'fs';
 
 import User from './models/User';
 import Game from './models/Game';
@@ -22,10 +23,10 @@ class WebSocketHandler {
   lobbyId: number;
   userId: number;
   messageId: number;
-  // drawingId: number;
   guessId: number;
   games: Game[];
   users: User[];
+  wordlist: string[];
 
   getUser = (id: number) => {
     return _.find(this.users, (u: User) => u.id === id);
@@ -47,18 +48,18 @@ class WebSocketHandler {
       return null;
     }
 
-    if (_.find(this.users, (user: User) => user.name === username)) {
-      socket.send(
-        JSON.stringify({
-          type: 'error',
-          payload: {
-            type: 'USERNAME_NOT_AVAILABLE',
-            string: 'Username is already in use',
-          },
-        })
-      );
-      return null;
-    }
+    // if (_.find(this.users, (user: User) => user.name === username)) {
+    //   socket.send(
+    //     JSON.stringify({
+    //       type: 'error',
+    //       payload: {
+    //         type: 'USERNAME_NOT_AVAILABLE',
+    //         string: 'Username is already in use',
+    //       },
+    //     })
+    //   );
+    //   return null;
+    // }
 
     const user = new User({
       id: this.userId++,
@@ -115,6 +116,14 @@ class WebSocketHandler {
     this.guessId = 1;
     this.games = [];
     this.users = [];
+    this.wordlist = [];
+
+    try {
+      const data = fs.readFileSync('src/wordlist.txt', 'utf8');
+      this.wordlist = data.split(/\r?\n/);
+    } catch (err) {
+      console.error('Error reading wordlist', err);
+    }
 
     const wss = new WebSocket.Server({ server });
     const wsLog = (text: string) => console.log(`WebSocket: ${text}`);

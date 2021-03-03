@@ -20,8 +20,9 @@ class Game {
   chat: Chat;
   postRound: object;
   prompts: Prompt[];
+  wordlist: string[];
 
-  constructor({ leader, code }) {
+  constructor({ leader, code, wordlist }) {
     this.leader = leader;
     this.users = [leader];
     this.started = false;
@@ -35,32 +36,12 @@ class Game {
     this.guesses = [];
     this.postRound = null;
     this.prompts = [];
+    this.wordlist = wordlist;
   }
 
   newPrompts = () => {
-    let words = [
-      'dog',
-      'sixpack',
-      'chimney',
-      'satellite',
-      'car',
-      'beach',
-      'sun',
-      'sushi',
-      'television',
-      'snow',
-      'computer',
-      'pear',
-      'clown',
-      'road',
-      'beer',
-      'trampoline',
-      'ketchup',
-      'fork',
-      'bridge',
-      'windmill',
-    ];
-    words = _.shuffle(words);
+    // TODO generate random indices instead of shuffling
+    let words = _.shuffle(this.wordlist);
 
     // Give prompts to users
     this.users.forEach((user, i) => {
@@ -70,7 +51,7 @@ class Game {
         return false;
       }
 
-      user.choices = words.slice(0, 3);
+      user.choices = words.slice(0, 3).map((word) => word.toLowerCase());
       user.send();
       words = words.slice(3);
     });
