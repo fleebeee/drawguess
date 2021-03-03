@@ -8,7 +8,11 @@ interface Props {
   placeholder?: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (event: React.ChangeEvent<HTMLFormElement>) => void;
+  handleSubmit: (
+    event:
+      | React.FormEvent<HTMLFormElement>
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 }
 
 const FieldWithButton = ({
