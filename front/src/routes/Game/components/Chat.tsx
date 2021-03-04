@@ -43,7 +43,7 @@ const Chat = () => {
         {game &&
           game.chat.messages.map((message) => (
             <Message key={message.id}>
-              {message.author}: {message.content}
+              <Author>{message.author}</Author>: {message.content}
             </Message>
           ))}
       </Messages>
@@ -82,6 +82,10 @@ const Messages = styled.div`
   border: 1px solid var(--main-500);
   border-radius: 5px;
   padding: 10px;
+`;
+
+const Author = styled.span`
+  color: var(--secondary-400);
 `;
 
 export default Chat;

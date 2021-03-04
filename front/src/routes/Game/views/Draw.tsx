@@ -44,7 +44,7 @@ const Word = styled.span`
   font-weight: 600;
   margin-left: 15px;
   margin-bottom: 5px;
-  color: var(--secondary-300);
+  color: var(--secondary-400);
 `;
 
 export default Draw;

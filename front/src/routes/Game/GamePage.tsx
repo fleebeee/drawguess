@@ -101,7 +101,7 @@ const GameView = () => {
     }
   };
 
-  return <GameContainer>{getGameView(game)}</GameContainer>;
+  return <GameContainer view={game.view}>{getGameView(game)}</GameContainer>;
 };
 
 const Register = styled.div`

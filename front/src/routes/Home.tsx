@@ -171,7 +171,7 @@ const Name = styled(Code)`
 const Credits = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 30px;
 `;
 
 const Credit = styled.a`

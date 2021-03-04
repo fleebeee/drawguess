@@ -81,6 +81,7 @@ const PostRound = () => {
               <Guess key={`${dg.author}-guess`} guess={dg} />
             )
           )}
+          <Filler id="filler" />
         </DrawGuess>
       ))}
 
@@ -102,10 +103,28 @@ const Wrapper = styled.div`
   gap: 40px;
 `;
 
+const Filler = styled.div`
+  margin-left: -40px;
+  margin-right: -40px;
+  border-top: 2px dashed var(--secondary-700);
+  height: 20px;
+`;
+
 const DrawGuess = styled.div`
-  padding: 20px;
-  background-color: var(--secondary-600);
-  border-radius: 10px;
+  // Extend to fill also the Card padding with our background
+  margin-left: -40px;
+  margin-right: -40px;
+
+  padding-left: 40px;
+  padding-right: 40px;
+
+  &:nth-child(2n) {
+    background-color: var(--secondary-700);
+
+    #filler {
+      border-top: 2px dashed var(--main-700);
+    }
+  }
 `;
 
 const PromptWrapper = styled.div`
@@ -125,7 +144,7 @@ const Prompt = styled.h2`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 40px;
 `;
 
 const Waiting = styled.h2`

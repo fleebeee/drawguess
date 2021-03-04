@@ -7,7 +7,7 @@ import WaitingList from './WaitingList';
 import PlayerList from './PlayerList';
 import Chat from './Chat';
 
-const GameContainer = ({ children }) => {
+const GameContainer = ({ children, view }) => {
   const { ws, game, user, error, loading } = useContext(CommonContext);
 
   const handleLeave = () => {
@@ -23,14 +23,15 @@ const GameContainer = ({ children }) => {
 
   return (
     <Container>
-      
-    <GameCard>
-    <Leave onClick={handleLeave}>Leave</Leave>
-      <PlayerList />
-      <Content>{waiting ? <WaitingList names={game.waiting} /> : children}</Content>
-      
-      <Chat />
-    </GameCard>
+      <GameCard>
+        <Leave onClick={handleLeave}>Leave</Leave>
+        <PlayerList />
+        <Content>
+          {waiting ? <WaitingList names={game.waiting} /> : children}
+        </Content>
+
+        <Chat />
+      </GameCard>
     </Container>
   );
 };
@@ -43,7 +44,7 @@ const Container = styled.div`
 const GameCard = styled(Card)`
   min-width: 400px;
   position: relative;
-`
+`;
 
 const Content = styled.div`
   padding-bottom: 20px;
