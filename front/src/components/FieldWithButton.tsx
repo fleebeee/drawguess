@@ -26,7 +26,7 @@ const FieldWithButton = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     if (value.length > 0 && value.length < 256) {
-      onSubmit();
+      onSubmit(value);
     } else {
       console.error('Invalid field value', value);
     }
