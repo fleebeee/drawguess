@@ -7,7 +7,7 @@ import { StaticRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 import { ChunkExtractor } from '@loadable/server';
-import _ from 'lodash';
+import last from 'lodash/last';
 
 import htmlTemplate from './htmlTemplate';
 import App from './App';
@@ -23,7 +23,7 @@ app.use(compression());
 app.get('*', (req, res) => {
   // If the request is for a file, serve it
   if (req.url.includes('.')) {
-    const filename = _.last(req.url.split('/'));
+    const filename = last(req.url.split('/'));
     const options = {
       root: __dirname,
     };

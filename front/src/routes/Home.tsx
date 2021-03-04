@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
-import _ from 'lodash';
+import truncate from 'lodash/truncate';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
 import CommonContext from '~utils/CommonContext';
@@ -68,7 +68,7 @@ const Home = () => {
   });
 
   const handleNameChange = (event) => {
-    setName(_.truncate(event.target.value));
+    setName(truncate(event.target.value));
   };
 
   const handleCodeChange = (event) => {
