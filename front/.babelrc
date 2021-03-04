@@ -9,7 +9,10 @@
     [
       "@babel/preset-env",
       {
-        "targets": { "esmodules": true },
+        "targets": {
+          "chrome": "89",
+          "firefox": "86"
+        },
         "bugfixes": true
       }
     ],

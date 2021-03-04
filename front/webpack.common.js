@@ -1,5 +1,6 @@
 const path = require('path');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: './src/client.tsx',
@@ -28,5 +29,13 @@ module.exports = {
   },
   optimization: {
     minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        terserOptions: {
+          ecma: 2019, // 2020 is a lot better, but is a bit too bleeding edge
+        },
+      }),
+    ],
   },
 };
