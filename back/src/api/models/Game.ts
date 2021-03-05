@@ -21,6 +21,7 @@ class Game {
   postRound: object;
   prompts: Prompt[];
   wordlist: string[];
+  iat: Date;
 
   constructor({ leader, code, wordlist }) {
     this.leader = leader;
@@ -37,6 +38,7 @@ class Game {
     this.postRound = null;
     this.prompts = [];
     this.wordlist = wordlist;
+    this.iat = new Date();
   }
 
   newPrompts = () => {
@@ -90,6 +92,8 @@ class Game {
   }
 
   send() {
+    this.iat = new Date();
+
     this.users.forEach((user) => {
       user.send(
         JSON.stringify({

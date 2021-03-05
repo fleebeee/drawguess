@@ -24,6 +24,7 @@ class User {
     this.socket = socket;
     this.secret = nanoid();
     this.choices = [];
+    this.iat = new Date();
   }
 
   getNewTask = () => {
@@ -90,6 +91,9 @@ class User {
       console.error('Trying to send to user with inactive socket');
       return false;
     }
+
+    // Update issued at
+    this.iat = new Date();
 
     this.socket.send(
       message ||
