@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import WebSocket from 'ws';
 
 import User from '../models/User';
 import Message from '../models/Message';

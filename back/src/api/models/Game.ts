@@ -42,20 +42,21 @@ class Game {
   }
 
   newPrompts = () => {
-    // TODO generate random indices instead of shuffling
-    let words = _.shuffle(this.wordlist);
+    let indices = _.shuffle([...Array(this.wordlist.length).keys()]);
 
     // Give prompts to users
     this.users.forEach((user, i) => {
-      if (words.length < 3) {
+      if (indices.length < 3) {
+        // This should never happen
         console.error('We ran out of words');
-        // TODO send error
         return false;
       }
 
-      user.choices = words.slice(0, 3).map((word) => word.toLowerCase());
+      user.choices = indices
+        .slice(0, 3)
+        .map((i) => this.wordlist[i].toLowerCase());
       user.send();
-      words = words.slice(3);
+      indices = indices.slice(3);
     });
   };
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation, Redirect } from 'react-router-dom';
 
-import Button from '~components/Button';
 import FieldWithButton from '~components/FieldWithButton';
 import CommonContext from '~utils/CommonContext';
 

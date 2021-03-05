@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import Button from '~components/Button';
@@ -55,7 +55,7 @@ const GuessText = styled.h2`
 `;
 
 const PostRound = () => {
-  const { ws, game, user, error, loading } = useContext(CommonContext);
+  const { ws, game, user } = useContext(CommonContext);
 
   const handleNext = () => {
     ws.send(

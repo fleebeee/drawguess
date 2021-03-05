@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import { generateRoomCode } from '../utils';
-import User from '../models/User';
 import Game from '../models/Game';
 
 const create = (api, ws, payload) => {

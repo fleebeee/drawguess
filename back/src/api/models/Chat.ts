@@ -1,5 +1,3 @@
-import WebSocket from 'ws';
-
 import Game from './Game';
 import Message from './Message';
 

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { promises as fs } from 'fs';
 
 import Guess from '../models/Guess';
 import User from '../models/User';

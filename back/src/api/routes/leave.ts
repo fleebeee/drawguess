@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import User from '../models/User';
-import Game from '../models/Game';
 
 const leave = (api, ws, payload) => {
   const { user } = payload;
@@ -11,11 +10,11 @@ const leave = (api, ws, payload) => {
 
   const { game } = serverUser;
   if (game) {
-    game.users = game.users.filter((u) => u.id !== serverUser.id);
+    game.users = game.users.filter((u) => u !== serverUser);
     serverUser.game = null;
   }
 
-  api.users = api.users.filter((u) => u.id !== serverUser.id);
+  api.users = api.users.filter((u) => u !== serverUser);
 
   ws.send(
     JSON.stringify({

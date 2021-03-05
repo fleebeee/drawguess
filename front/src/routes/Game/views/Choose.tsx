@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 import CommonContext from '~utils/CommonContext';
@@ -10,7 +10,7 @@ const Choose = () => {
   // This should probably be validated
   const [custom, setCustom] = useState('');
 
-  const { ws, game, user, error, loading } = useContext(CommonContext);
+  const { ws, user } = useContext(CommonContext);
 
   const handleSubmit = (choice: string) => {
     ws.send(

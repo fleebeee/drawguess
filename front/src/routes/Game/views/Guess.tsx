@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
-import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
 import FieldWithButton from '~components/FieldWithButton';
 
 const Guess = () => {
   const [guess, setGuess] = useState('');
 
-  const { ws, game, user, error, loading } = useContext(CommonContext);
+  const { ws, game, user } = useContext(CommonContext);
 
   const handleSubmit = () => {
     ws.send(

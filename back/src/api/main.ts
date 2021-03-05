@@ -130,11 +130,11 @@ class WebSocketHandler {
     }
 
     // Help out Node garbage collector
-    // TODO check that this works
     const removeDeadGames = () => {
       this.games.forEach((game) => {
         if (new Date().getTime() - game.iat.getTime() > LONG_TIME) {
           console.debug(`Game ${game.code} is old and will be deleted now`);
+
           // Remove all references to game
           game.users.forEach((user) => {
             // Not sure if this is needed
@@ -143,6 +143,7 @@ class WebSocketHandler {
             console.debug(`Removing user ${user.name}`);
             this.users = this.users.filter((u) => u !== user);
           });
+          game.users = null;
           this.games = this.games.filter((g) => g !== game);
         }
       });
@@ -151,14 +152,12 @@ class WebSocketHandler {
 
     const wss = new WebSocket.Server({ server });
     const wsLog = (text: string) => console.log(`WebSocket: ${text}`);
-    wss.on('connection', (ws, req) => {
-      // TODO Handle disconnections
-
+    wss.on('connection', (ws) => {
       ws.on('message', (message: string) => {
         const m = JSON.parse(message);
         const { type, payload } = m;
 
-        console.debug(`Received message\n${type}:`, payload);
+        console.debug(`Received: ${type}`);
 
         switch (type) {
           case 'create-game': {

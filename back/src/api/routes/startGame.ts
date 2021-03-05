@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import User from '../models/User';
-import Game from '../models/Game';
 
 const startGame = (api, ws, payload) => {
   const { user: clientUser } = payload;

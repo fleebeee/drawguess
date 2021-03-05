@@ -1,13 +1,11 @@
 import _ from 'lodash';
 
-import User from '../models/User';
-import Game from '../models/Game';
-
 const reconnect = (api, ws, payload) => {
   const { user } = payload;
 
   const oldUser = api.authenticate(ws, user);
 
+  // TODO make this logic more robust
   if (!oldUser) {
     // Just reset the old user and game
     ws.send(

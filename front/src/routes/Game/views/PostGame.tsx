@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
 
 import Button from '~components/Button';
 import CommonContext from '~utils/CommonContext';
 
 const PostGame = () => {
-  const { ws, game, user, error, loading } = useContext(CommonContext);
+  const { ws, game, user } = useContext(CommonContext);
 
   const handleStart = () => {
     ws.send(

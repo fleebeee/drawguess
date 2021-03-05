@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import loadable from '@loadable/component';
+// import loadable from '@loadable/component';
 
 import useWebSocket from '~utils/useWebSocket';
 import CommonContext from '~utils/CommonContext';
@@ -29,7 +29,7 @@ const App = () => {
         <CommonContext.Provider value={commonProps}>
           <Content>
             <Error>{error && error.string}</Error>
-            
+
             <Switch>
               <Route exact path="/">
                 <HomePage />
