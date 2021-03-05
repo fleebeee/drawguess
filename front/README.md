@@ -1,12 +1,14 @@
-# drawguess
+# Usage
 
-npm run build:client
-npm run build:server
-npm run start:server
+In production, add your host to `config.ts`.
 
-Go to localhost:1234
+```
+cd front
+npm install
+npm run build:prod
+npm run start:prod
+```
 
-# Known issues
+For development, use `npm run start`
 
-[webpack-dev-server doesn't work](https://github.com/webpack/webpack-dev-server/issues/2029)
-webpack html plugin causes deprecation warnings
+You can access the game from your browser at port `5001`.
