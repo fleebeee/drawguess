@@ -6,10 +6,10 @@ const useWebSocket = () => {
   const [ws, setWs] = useState<WebSocket>(null);
   const [error, setError] = useState<ApiError>(null);
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessageServer[]>([]);
-  const [user, setUser] = useState<User>(null);
-  const [game, setGame] = useState<Game>(null);
-  const messagesRef = useRef<ChatMessageServer[]>();
+  const [messages, setMessages] = useState([]);
+  const [user, setUser] = useState(null);
+  const [game, setGame] = useState(null);
+  const messagesRef = useRef<any[]>();
   messagesRef.current = messages;
 
   useEffect(() => {
@@ -47,11 +47,11 @@ const useWebSocket = () => {
 
         switch (type) {
           case 'chatMessages': {
-            setMessages(payload as ChatMessageServer[]);
+            setMessages(payload);
             break;
           }
           case 'chatMessage': {
-            setMessages([...messagesRef.current, payload as ChatMessageServer]);
+            setMessages([...messagesRef.current, payload]);
             break;
           }
           case 'user': {
@@ -72,7 +72,7 @@ const useWebSocket = () => {
               setGame(null);
               break;
             }
-            setGame(payload as Game);
+            setGame(payload);
             setMessages(payload.chat);
             setError(null);
             break;
