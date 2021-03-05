@@ -9,6 +9,7 @@ const Draw = () => {
 
   const previousGuess =
     user && user.task && user.task.guess && user.task.guess.data;
+  const author = previousGuess && user.task.guess.author;
 
   const prompt = user && user.prompt;
 
@@ -21,6 +22,7 @@ const Draw = () => {
           <Objective>Draw something</Objective>
         )}
         <Word>{prompt || previousGuess}</Word>
+        {author && <Author>({author}'s guess)</Author>}
       </WordWrapper>
       <Drawboard />
     </div>
@@ -45,6 +47,13 @@ const Word = styled.span`
   margin-left: 15px;
   margin-bottom: 5px;
   color: var(--secondary-400);
+`;
+
+const Author = styled.span`
+  margin-left: 20px;
+  font-weight: 400;
+  color: var(--main-400);
+  font-size: 14px;
 `;
 
 export default Draw;

@@ -20,11 +20,13 @@ const Guess = () => {
   };
 
   let drawingUrl = user && user.task.drawing && user.task.drawing.data;
+  const author = user && user.task.drawing && user.task.drawing.author;
 
   return (
     <Wrapper>
       <What>What is this?</What>
-      {drawingUrl && <Drawing src={drawingUrl} />}
+      {drawingUrl ? <Drawing src={drawingUrl} /> : <Placeholder />}
+      <Meta>Artist: {author}</Meta>
 
       <FieldWithButton
         label="Submit"
@@ -46,11 +48,26 @@ const Wrapper = styled.div`
 
 const Drawing = styled.img`
   align-self: center;
-  margin-bottom: 20px;
+  width: 500px;
+  height: 500px;
+`;
+
+const Placeholder = styled.div`
+  align-self: center;
+  width: 500px;
+  height: 500px;
 `;
 
 const What = styled.h2`
   margin-bottom: 10px;
+`;
+
+const Meta = styled.h4`
+  margin-top: 10px;
+  margin-bottom: 40px;
+  align-self: flex-end;
+  font-weight: 400;
+  color: var(--secondary-400);
 `;
 
 export default Guess;
