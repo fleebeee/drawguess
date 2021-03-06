@@ -17,7 +17,7 @@ const Button = ({ children, disabled, onClick, fontSize }: Props) => (
     }}
     fontSize={fontSize}
     disabled={disabled}
-    type="button"
+    type="submit"
   >
     {children}
   </Container>
