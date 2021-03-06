@@ -58,11 +58,13 @@ const Chat = () => {
 
 const Wrapper = styled.div`
   width: 100%;
+  max-width: 400px;
   margin-top: 50px;
 `;
 
 const Message = styled.li`
   margin-bottom: 10px;
+  word-break: break-all;
 `;
 
 const TextField = styled.textarea`
@@ -79,6 +81,7 @@ const TextField = styled.textarea`
 const Messages = styled.div`
   height: 150px;
   overflow-y: scroll;
+  overflow-x: hidden;
   border: 1px solid var(--main-500);
   border-radius: 5px;
   padding: 10px;
