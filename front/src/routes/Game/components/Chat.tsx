@@ -69,7 +69,7 @@ const Message = styled.li`
 
 const TextField = styled.textarea`
   margin-top: 20px;
-  background-color: var(--main-900);
+  background-color: var(--main-850);
   color: white;
   border-radius: 4px;
   border: 2px solid var(--main-500);
@@ -85,6 +85,7 @@ const Messages = styled.div`
   border: 1px solid var(--main-500);
   border-radius: 5px;
   padding: 10px;
+  background-color: var(--main-850);
 `;
 
 const Author = styled.span`
