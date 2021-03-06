@@ -25,7 +25,6 @@ const App = () => {
   return (
     <>
       <React.StrictMode>
-        <GlobalStyles />
         <CommonContext.Provider value={commonProps}>
           <Content>
             <Error>{error && error.string}</Error>
@@ -40,6 +39,7 @@ const App = () => {
             </Switch>
           </Content>
         </CommonContext.Provider>
+        <GlobalStyles />
       </React.StrictMode>
     </>
   );
