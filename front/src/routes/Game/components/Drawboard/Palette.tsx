@@ -7,7 +7,7 @@ const palette = [
   'blue',
   'fuchsia',
   'gray',
-  'grey',
+  '#eebb99',
   'green',
   'lime',
   'maroon',
