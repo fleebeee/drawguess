@@ -50,7 +50,6 @@ const GuessWrapper = styled.div`
 const GuessLabel = styled.div``;
 
 const GuessText = styled.h2`
-  margin-left: 10px;
   padding-bottom: 3px;
 `;
 
@@ -72,7 +71,10 @@ const PostRound = () => {
         <DrawGuess key={player.name}>
           <PromptWrapper>
             <PromptLabel>{player.name}'s prompt:</PromptLabel>
-            <Prompt>{player.prompt}</Prompt>
+            <Prompt>{player.prompt.value}</Prompt>
+            {player.prompt.author !== player.name && (
+              <PromptAuthor>(chosen by {player.prompt.author})</PromptAuthor>
+            )}
           </PromptWrapper>
           {player.result.map((dg) =>
             dg.type === 'drawing' ? (
@@ -100,14 +102,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 40px;
 `;
 
 const Filler = styled.div`
   margin-left: -40px;
   margin-right: -40px;
-  border-top: 2px dashed var(--secondary-700);
-  height: 20px;
+  border-top: 6px dashed var(--secondary-700);
+  height: 40px;
 `;
 
 const DrawGuess = styled.div`
@@ -122,7 +123,7 @@ const DrawGuess = styled.div`
     background-color: var(--secondary-700);
 
     #filler {
-      border-top: 2px dashed var(--main-700);
+      border-top: 6px dashed var(--main-700);
     }
   }
 `;
@@ -139,6 +140,12 @@ const PromptLabel = styled.div``;
 const Prompt = styled.h2`
   margin-left: 10px;
   padding-bottom: 3px;
+  color: var(--secondary-500);
+`;
+
+const PromptAuthor = styled.h4`
+  opacity: 0.5;
+  margin-left: 10px;
 `;
 
 const ButtonWrapper = styled.div`

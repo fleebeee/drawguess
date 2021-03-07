@@ -11,7 +11,7 @@ const Draw = () => {
     user && user.task && user.task.guess && user.task.guess.data;
   const author = previousGuess && user.task.guess.author;
 
-  const prompt = user && user.prompt;
+  const prompt = user && user.prompt && user.prompt.value;
 
   return (
     <div>
@@ -46,7 +46,7 @@ const Word = styled.span`
   font-weight: 600;
   margin-left: 15px;
   margin-bottom: 5px;
-  color: var(--secondary-400);
+  color: var(--secondary-500);
 `;
 
 const Author = styled.span`

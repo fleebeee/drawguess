@@ -71,6 +71,24 @@ class User {
     this.send();
   };
 
+  getNextUser() {
+    if (!this.game) {
+      console.error('getNextUser: User is not in a game');
+      return null;
+    }
+
+    const idx = this.game.users.findIndex((u) => u === this);
+
+    if (idx === -1) {
+      console.error('getNextUser: User index not found');
+      return null;
+    }
+
+    const nextIdx = (idx + 1) % this.game.users.length;
+
+    return this.game.users[nextIdx];
+  }
+
   forClient() {
     const { id, secret, name, iat, leader, game, task, choices, prompt } = this;
     return {
@@ -82,7 +100,7 @@ class User {
       game: game ? game.forClient() : null,
       task,
       choices,
-      prompt: prompt && prompt.value,
+      prompt: prompt && { value: prompt.value, author: prompt.author.name },
     };
   }
 

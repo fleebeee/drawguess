@@ -35,10 +35,15 @@ const submitGuess = (api, ws, payload) => {
 
   game.waiting = game.waiting.filter((u) => u.id !== user.id);
 
+  // The game must always end on a guess
+  const evenPlayerCount = game.users.length % 2 === 0;
+  const maxRounds = evenPlayerCount ? game.users.length : game.users.length - 1;
+  const endCondition = game.turn >= maxRounds;
+
   if (game.waiting.length === 0) {
     // We are ready to move on to the next phase
 
-    if (game.turn >= game.users.length) {
+    if (endCondition) {
       // New round begins
       game.view = 'post-round';
 
@@ -52,34 +57,40 @@ const submitGuess = (api, ws, payload) => {
         const n = game.users.length;
 
         console.debug(`Post-round for user ${u.name}`);
-        for (let j = 0; j < n; j += 2) {
+        // j represents user indices
+        for (let j = evenPlayerCount ? 0 : 1; j < n; j += 2) {
+          const turn = j + (evenPlayerCount ? 1 : 0);
+
           console.debug(
-            `Finding drawing by user ${game.users[(i + j) % n].name} on turn ${
-              j + 1
-            }`
+            `Finding drawing by user ${
+              game.users[(i + j) % n].name
+            } on turn ${turn}`
           );
           const drawing = drawings.find(
-            (d) => d.author === game.users[(i + j) % n] && d.turn === j + 1
+            (d) => d.author === game.users[(i + j) % n] && d.turn === turn
           );
 
           console.debug(
             `Finding guess by user ${
               game.users[(i + j + 1) % n].name
-            } on turn ${j + 2}`
+            } on turn ${turn + 1}`
           );
           const guess = guesses.find(
-            (g) => g.author === game.users[(i + j + 1) % n] && g.turn === j + 2
+            (g) =>
+              g.author === game.users[(i + j + 1) % n] && g.turn === turn + 1
           );
 
           result.push(drawing.forClient());
           result.push(guess.forClient());
         }
 
+        const prompt = game.prompts.find(
+          (prompt) => prompt.round === game.round && prompt.user === u
+        );
+
         return {
           name: u.name,
-          prompt: game.prompts.find(
-            (prompt) => prompt.round === game.round && prompt.author === u
-          ).value,
+          prompt: { value: prompt.value, author: prompt.author.name },
           result,
         };
       });
